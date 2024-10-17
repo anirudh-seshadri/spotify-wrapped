@@ -3,3 +3,5 @@
 
 # Ignore IDE configurations
 .idea/
+
+.env
