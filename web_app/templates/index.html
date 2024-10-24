@@ -5,12 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped Home</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <h1>Spotify Wrapped is good now</h1>
-    <p>{{ greeting }}</p> <!-- This should display "How are you, user?" -->
+    <header>
+        <nav>
+            <a href="#">Welcome</a>
+            <a href="{% url 'spotify_login' %}">Login with Spotify</a>
+            <a href="#">Profile</a>
+        </nav>
+    </header>
 
-    <a href="{% url 'spotify_login' %}">Login with Spotify</a>
+    <div class="welcome-container">
+        <h1>Create a Wrapped Account</h1>
+        <p>{{ greeting }}</p> <!-- This should display "How are you, user?" -->
+    </div>
 
     <div style="margin-top: 20px;">
         <button onclick="fetchData('/api/profile/')">Get Profile</button>
@@ -21,6 +30,10 @@
     </div>
 
     <pre id="result" style="margin-top: 20px;"></pre>
+
+    <footer>
+        <p>© 2024 Your Project</p>
+    </footer>
 
     <script>
         async function fetchData(endpoint) {
