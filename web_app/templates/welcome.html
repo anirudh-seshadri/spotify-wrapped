@@ -5,20 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}"> <!-- Assuming you'll add your CSS file -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <header>
         <nav>
             <a href="#">Welcome</a>
-            <!-- ADD LOGIN -->
+            <a href="{% url 'login' %}">Login</a>
             <a href="#">Profile</a>
         </nav>
     </header>
 
     <div class="welcome-container">
         <h1>Create a Wrapped Account</h1>
-        <!-- ADD LOGIN -->
+        <a href="{% url 'login' %}" class="cta-button">Create a wrapped account</a>
     </div>
 
     <footer>
