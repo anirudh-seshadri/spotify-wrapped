@@ -1,0 +1,29 @@
+<!-- templates/welcome.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"> <!-- Assuming you'll add your CSS file -->
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#">Welcome</a>
+            <!-- ADD LOGIN -->
+            <a href="#">Profile</a>
+        </nav>
+    </header>
+
+    <div class="welcome-container">
+        <h1>Create a Wrapped Account</h1>
+        <!-- ADD LOGIN -->
+    </div>
+
+    <footer>
+        <p>© 2024 Your Project</p>
+    </footer>
+</body>
+</html>

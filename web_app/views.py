@@ -39,5 +39,13 @@ def get_spotify_data(request):
     headers = {'Authorization': f'Bearer {access_token}'} # bearer is authorized to make api requests
     response = get(f'{SPOTIFY_API_BASE_URL}/me/top/tracks', headers=headers) # gets user's top tracks
     return json.loads(response.text)
+
+
 def index(request):
-    return render(request, 'index.html')
+    context = {
+        'greeting' : 'How are you, user?'
+    }
+    return render(request, 'index.html', context)
+
+def welcome(request):
+    return render(request, 'welcome.html')
