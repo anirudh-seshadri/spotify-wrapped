@@ -1,5 +1,7 @@
+from os import access
+
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import os
 from django.shortcuts import redirect
 from django.conf import settings
@@ -47,8 +49,9 @@ SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1'
 
 # Takes user to Spotify's auth url
 def spotify_authentication(request):
-    scope = 'user-read-private user-read-email user-top-read' # Access to reading profile data, email address, top tracks that they have played
-    redirect_uri = request.build_absolute_uri('/back/') # Builds absolute URI and takes to back endpoint
+    scope = 'user-read-private user-read-email user-top-read user-read-recently-played user-library-read' # Access to reading profile data, email address, top tracks that they have played
+    host = request.get_host().replace('127.0.0.1', 'localhost')
+    redirect_uri = f'http://{host}/back/'  # Builds the redirect URI and takes to back endpoint
     auth_url = f'{SPOTIFY_AUTH_URL}?client_id={settings.SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri={redirect_uri}&scope={scope}' # client ID, auth code, uri to get redirected after login, scope
 
     return redirect(auth_url)
@@ -57,11 +60,11 @@ def spotify_back(request):
     error = request.GET.get('error') # Error parameter sent by spotify
     if error:
         state = request.GET.get('state') # State parameter sent by spotify
-        print("Error occured while logging into spotify: ", state)
         return HttpResponse("Error occured while logging into spotify: ", state)
 
     code = request.GET.get('code') # Code parameter sent by spotify
     redirect_uri = request.build_absolute_uri('/back/')
+    print(f"Callback Redirect URI: {redirect_uri}")
     auth_token = f"{settings.SPOTIFY_CLIENT_ID}:{settings.SPOTIFY_CLIENT_SECRET}"
     auth_base64str = str(base64.b64encode(auth_token.encode('utf-8')), 'utf-8') # Client credentials as base-64 encoded string
 
@@ -78,12 +81,86 @@ def spotify_back(request):
     print("Tokens: ", tokens)
 
     return redirect('/')
-# Using access token, get data through spotify's api
-def get_spotify_data(request):
-    access_token = request.session.get['access_token']
-    headers = {'Authorization': f'Bearer {access_token}'} # bearer is authorized to make api requests
-    response = get(f'{SPOTIFY_API_BASE_URL}/me/top/tracks', headers=headers) # gets user's top tracks
-    return json.loads(response.text)
+
+# # Using access token, get data through spotify's api
+def get_user_profile(request):
+    try:
+        access_token = request.session.get('access_token')
+        headers = {'Authorization': f'Bearer {access_token}'} # bearer is authorized to make api requests
+        response = get(f'{SPOTIFY_API_BASE_URL}/me', headers=headers) # gets user's profile information
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+def get_top_tracks(request):
+    try:
+        access_token = request.session.get('access_token')
+        time_range = request.GET.get('time_range', 'medium_term')
+        lim = request.GET.get('limit', '20')
+        headers = {'Authorization': f'Bearer {access_token}'}
+        response = get(
+            f'{SPOTIFY_API_BASE_URL}/me/top/tracks',
+            headers=headers,
+            params={'time_range': time_range, 'limit': lim}
+        )
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def get_top_artists(request):
+    try:
+        access_token = request.session.get('access_token')
+        time_range = request.GET.get('time_range', 'medium_term')
+        lim = request.GET.get('limit', '20')
+        headers = {'Authorization': f'Bearer {access_token}'}
+        response = get(
+            f'{SPOTIFY_API_BASE_URL}/me/top/artists',
+            headers=headers,
+            params={'time_range': time_range, 'limit': lim}
+        )
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def get_recently_played(request):
+    try:
+        access_token = request.session.get('access_token')
+        lim = request.GET.get('limit', '20')
+        headers = {'Authorization': f'Bearer {access_token}'}
+        response = get(
+            f'{SPOTIFY_API_BASE_URL}/me/player/recently-played',
+            headers=headers,
+            params={'limit': lim}
+        )
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def get_saved_tracks(request):
+    try:
+        access_token = request.session.get('access_token')
+        lim = request.GET.get('limit', '20')
+        offset = request.GET.get('offset', '0')
+        headers = {'Authorization': f'Bearer {access_token}'}
+        response = get(
+            f'{SPOTIFY_API_BASE_URL}/me/tracks',
+            headers=headers,
+            params={'limit': lim, 'offset': offset}
+        )
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def get_track_features(request, track_id):
+    try:
+        access_token = request.session.get('access_token')
+        headers = {'Authorization': f'Bearer {access_token}'}
+        response = get(
+            f'{SPOTIFY_API_BASE_URL}/audio-features/{track_id}',
+            headers=headers
+        )
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 def index(request):
     context = {
         'greeting' : 'How are you, user?'

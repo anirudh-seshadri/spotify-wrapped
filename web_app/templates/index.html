@@ -1,6 +1,4 @@
 {% load static %}
-{% csrf_token %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +8,26 @@
 </head>
 <body>
     <h1>Spotify Wrapped is good now</h1>
-    <p>{{ greeting }}</p>  <!-- This should display "How are you, user?" -->  
+    <p>{{ greeting }}</p>  <!-- This should display "How are you, user?" -->
+
+    <a href="{% url 'spotify_login' %}">Login with Spotify</a>
+
+    <div style="margin-top: 20px;">
+        <button onclick="fetchData('/api/profile/')">Get Profile</button>
+        <button onclick="fetchData('/api/top-tracks/')">Get Top Tracks</button>
+        <button onclick="fetchData('/api/top-artists/')">Get Top Artists</button>
+        <button onclick="fetchData('/api/recently-played/')">Get Recently Played</button>
+        <button onclick="fetchData('/api/saved-tracks/')">Get Saved Tracks</button>
+    </div>
+
+    <pre id="result" style="margin-top: 20px;"></pre>
+
+    <script>
+        async function fetchData(endpoint) {
+            const response = await fetch(endpoint);
+            const data = await response.json();
+            document.getElementById('result').innerHTML = JSON.stringify(data, null, 2);
+        }
+    </script>
 </body>
 </html>
