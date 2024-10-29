@@ -2,8 +2,8 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: '', sans-serif;
-    background-color: #1a001f;
+    font-family: 'Poppins', sans-serif;
+    background-color: #23063A;
     color: white;
 }
 
@@ -11,7 +11,7 @@ header {
     display: flex;
     justify-content: space-between;
     padding: 1rem;
-    background-color: #f2f;
+    background-color: #BC7AFF;
     color: white;
 }
 
@@ -33,7 +33,7 @@ h1 {
 
 .cta-button {
     text-decoration: none;
-    background-color: #ff33cc;
+    background-color: #BC7AFF;
     color: white;
     padding: 1rem 2rem;
     border-radius: 30px;
@@ -48,39 +48,58 @@ h1 {
 footer {
     text-align: center;
     padding: 2rem;
-    background-color: #333;
+    background-color: #23063A;
     color: white;
 }
 
 
 .year-section {
+    position: relative;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 500px;
+    height: 100px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 150px;
-    color: white;
-    font-size: 4em;
+    justify-content: center;
+    font-size: 2.5em;
+    color: #BB129C;
     font-weight: bold;
-    text-transform: uppercase;
+    overflow: hidden;
 }
 
+.year-section h2 {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+}
+
+
 .year-2024 {
-    background: #9bdce8; /* Adjust color to match image */
+    background: #BB129C; 
+    color: #1AE3DD ;
 }
 
 .year-2023 {
-    background: #fdb54e;
+    background: #FF3721;
+    color: #E4FF1A;
+   
 }
 
 .year-2022 {
-    background: #6464d4;
+    background: #4F09FF;
+    color: #FCF3E4;
+    
 }
 
 .year-2021 {
-    background: #ffe75e;
+    background: #E4FF1A;
+    color: #FF3721;
+    
 }
 
 .year-2020 {
-    background: #63c7c1;
+    background: #1AE3DD;
+    color:#BB129C ;
 }
 
