@@ -1,0 +1,123 @@
+/* Desktop */
+html {
+    font-size: 16px;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+    html {
+        font-size: 15px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+body {
+    background-color: #23063a;
+}
+
+/* Rectangle style */
+header {
+    width: 100%;
+    height: 50px; /* Adjust height as needed */
+    background-color: #bc7aff; /* Set your preferred color */
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.profile-button {
+    font-family: 'Literata', serif;
+    position: absolute;
+    top: 50%; 
+    right: 20px;
+    transform: translateY(-50%);
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #fcf3e3;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+
+.profile-button i,
+.profile-button svg {
+    font-size: 24px;
+    margin-right: 8px;
+    width: 24px;
+    height: 24px;
+}
+
+.profile-button:hover {
+    color: #cabba0;
+    background-size: 250%;
+    background-position: 45% 55%;
+}
+
+
+
+/* Main Styles */
+main {
+    font-family: 'Literata', serif;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    height: 90vh; 
+}
+
+h2 {
+    font-family: 'Abril Fatface', serif;
+    font-size: 3rem;
+}
+
+/* Diagonal Box Styles */
+.diagonal-box {
+    font-family: 'Abril Fatface', serif;
+    font-size: 3rem;
+    display: grid;
+    color:rgb(98, 234, 255);
+    grid-template-columns: repeat(3, minmax(100px, 1fr));
+    height: 30%;
+    width: 50%;
+    /* border: 2px solid #800080;  */
+    position: relative;
+    padding: 40px; 
+}
+
+/* Positioning the Words */
+.left {
+    justify-self: center;
+    align-self: start; 
+}
+
+.center {
+    justify-self: center; 
+    align-self: center;
+}
+
+.right {
+    justify-self: end; 
+    align-self: end; 
+}
+
+.info-container {
+    color: yellow;
+    position: relative;
+    width: 100%;
+    height: 75vh;
+    margin-left: 10vh;
+}
+
+#artists {
+    color: red;
+}
+

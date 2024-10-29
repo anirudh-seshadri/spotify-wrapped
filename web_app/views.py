@@ -41,3 +41,10 @@ def get_spotify_data(request):
     return json.loads(response.text)
 def index(request):
     return render(request, 'index.html')
+
+def slide1(request):
+    return render(request, 'slide1.html')
+def slide2(request):
+    return render(request, 'slide2.html')
+def slide3(request):
+    return render(request, 'slide3.html')
