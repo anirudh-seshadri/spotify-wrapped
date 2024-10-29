@@ -4,5 +4,12 @@ web_app/__pycache__/    # Ignore Python bytecode
 spotify_wrapped/__pycache__/    # Ignore Python bytecode
 # Ignore IDE configurations
 .idea/
-
+sort.py
 .env
+myenv
+
+spotify_wrapped/__pycache__/
+web_app/__pycache__/
+web_app/migrations/
+web_app/templates/test_login.html
+web_app/templates/test_register.html

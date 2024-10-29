@@ -22,6 +22,4 @@ from web_app import views
 urlpatterns = [
     path("", include("web_app.urls")),
     path("admin/", admin.site.urls),
-    path('spotify/login/', views.spotify_authentication, name='spotify_login'),
-    path('back/', views.spotify_back, name='spotify_back'),
 ]
