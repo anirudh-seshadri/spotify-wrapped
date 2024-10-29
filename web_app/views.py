@@ -103,3 +103,6 @@ def login_form(request):
 def signup_form(request):
     # Placeholder for signup form logic
     return render(request, 'signup_form.html')
+
+def pastwraps(request):
+    return render(request, 'pastwraps.html')
