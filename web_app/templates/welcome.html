@@ -5,24 +5,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script> <!-- Tailwind CDN -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Load Google Font Literata -->
+    <link href="https://fonts.googleapis.com/css2?family=Literata:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply the Literata font to the entire page */
+        body {
+            font-family: 'Literata', serif;
+        }
+
+        /* CSS for the faster swipe-out animation */
+        @keyframes swipeOut {
+            0% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+        }
+
+        /* Apply the animation to the body */
+        .swipe-transition {
+            animation: swipeOut 1s forwards;  /* Faster animation, 1 second */
+        }
+    </style>
+    <script>
+        // JavaScript to delay for 3 seconds, then apply the swipe and redirect
+        setTimeout(function() {
+            document.body.classList.add('swipe-transition');  // Trigger the swipe animation after 3 seconds
+            setTimeout(function() {
+                window.location.href = "{% url 'login' %}";  // Redirect after 1-second animation completes
+            }, 1000);  // 1-second delay for the animation to complete
+        }, 3000);  // Stay on the welcome screen for 3 seconds before starting the transition
+    </script>
 </head>
-<body>
-    <header>
-        <nav>
-            <a href="#">Welcome</a>
-            <a href="{% url 'login' %}">Login</a>
-            <a href="#">Profile</a>
-        </nav>
+<body class="bg-[#23063A] min-h-screen flex flex-col justify-between">
+
+    <!-- Header with Wavy Background -->
+    <header class="relative">
+        <div class="bg-[#BC7AFF] text-white flex justify-end items-center py-4 px-8">
+            <a href="{% url 'login' %}" class="hover:underline text-white">Profile</a>
+        </div>
+        <!-- SVG for the wave effect -->
+        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+            <svg class="relative block w-full h-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                <path fill="#BC7AFF" fill-opacity="1" d="M0,160L1440,320L1440,320L0,320Z"></path>
+            </svg>
+        </div>
     </header>
 
-    <div class="welcome-container">
-        <h1>Create a Wrapped Account</h1>
-        <a href="{% url 'login' %}" class="cta-button">Create a wrapped account</a>
+    <!-- Main Content -->
+    <div class="welcome-container flex flex-col items-center justify-center flex-grow text-center text-[#FCF3E4]">
+        <h1 class="text-4xl font-bold mb-8">Create a Wrapped Account</h1>
     </div>
 
-    <footer>
+    <!-- Footer -->
+    <footer class="text-center bg-gray-800 text-white py-4">
         <p>© 2024 Your Project</p>
     </footer>
+
 </body>
 </html>
