@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Wraps</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+
+
+
+<body>
+    <header>
+        <nav>
+            <a href="#">Welcome</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'pastwraps' %}">Past Wraps</a>
+            <a href="#">Profile</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1>click the year to view your past wraps...</h1>
+        <section class="year-section year-2024">
+            <h2>202420242024202420242024</h2>
+        </section>
+        <section class="year-section year-2023">
+            <h2>202320232023202320232023</h2>
+        </section>
+        <section class="year-section year-2022">
+            <h2>202220222022202220222022</h2>
+        </section>
+        <section class="year-section year-2021">
+            <h2>202120212021202120212021</h2>
+        </section>
+        <section class="year-section year-2020">
+            <h2>202020202020202020202020</h2>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 Your Project</p>
+    </footer>
+</body>
