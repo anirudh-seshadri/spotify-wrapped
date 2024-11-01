@@ -29,6 +29,7 @@ class SpotifyAuthMiddleware:
             request.session['next'] = request.path
             return redirect('/login')
 
+        print("USER LOGGED IN, USER: ", request.user)
         # Check if the user has a valid Spotify access token
         user = request.user
         printUser(user)

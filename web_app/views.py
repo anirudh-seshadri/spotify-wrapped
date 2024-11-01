@@ -223,4 +223,5 @@ def index(request):
     return render(request, 'index.html', context)
 
 def welcome(request):
+    print("WELCOME")
     return render(request, 'index.html')
