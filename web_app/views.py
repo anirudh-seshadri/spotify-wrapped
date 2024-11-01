@@ -1,52 +1,131 @@
 from os import access
-
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-import os
-from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login, logout
+from .models import User
+from django.contrib import messages
 from django.conf import settings
 import base64
 import json
 from requests import post, get
+from django.utils import timezone
 
 SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1'
 
+# Register View
+def register(request):
+    if request.user.is_authenticated:
+        # If user is already logged in, redirect to homepage
+        return redirect('/')
+
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        # Check if the user already exists
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username already exists.')
+            return redirect('register')
+
+        # Create the user
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+
+        # Automatically log the user in after registration
+        login(request, user)
+
+        # Redirect to Home
+        return redirect('/')
+
+    return render(request, 'test_register.html')
+
+
+# Login View
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('/')
+
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('/')
+        else:
+            messages.error(request, 'Invalid username or password.')
+            return redirect('login')
+
+    return render(request, 'test_login.html')
+
+
+# Logout View
+def logout_view(request):
+    if not request.user.is_authenticated:
+        # If user is not logged in, redirect to login (can't logout if not logged in)
+        return redirect('/login')
+
+    logout(request)
+    request.session.flush()
+    
+    print("Logging out user ", request.user)
+
+    return redirect('/login')
+
+
 # Takes user to Spotify's auth url
 def spotify_authentication(request):
-    scope = 'user-read-private user-read-email user-top-read user-read-recently-played user-library-read' # Access to reading profile data, email address, top tracks that they have played
-    host = request.get_host().replace('127.0.0.1', 'localhost')
-    redirect_uri = f'http://{host}/back/'  # Builds the redirect URI and takes to back endpoint
-    auth_url = f'{SPOTIFY_AUTH_URL}?client_id={settings.SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri={redirect_uri}&scope={scope}' # client ID, auth code, uri to get redirected after login, scope
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    scope = 'user-read-private user-read-email user-top-read'
+    redirect_uri = request.build_absolute_uri('/back/')
+    auth_url = f'{SPOTIFY_AUTH_URL}?client_id={settings.SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri={redirect_uri}&scope={scope}'
 
     return redirect(auth_url)
 
+
+# Handle Spotify authentication callback
 def spotify_back(request):
-    error = request.GET.get('error') # Error parameter sent by spotify
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    error = request.GET.get('error')
     if error:
-        state = request.GET.get('state') # State parameter sent by spotify
-        return HttpResponse("Error occured while logging into spotify: ", state)
+        return HttpResponse(f"Error occurred during Spotify authentication: {error}")
 
-    code = request.GET.get('code') # Code parameter sent by spotify
+    code = request.GET.get('code')
     redirect_uri = request.build_absolute_uri('/back/')
-    print(f"Callback Redirect URI: {redirect_uri}")
     auth_token = f"{settings.SPOTIFY_CLIENT_ID}:{settings.SPOTIFY_CLIENT_SECRET}"
-    auth_base64str = str(base64.b64encode(auth_token.encode('utf-8')), 'utf-8') # Client credentials as base-64 encoded string
+    auth_base64str = str(base64.b64encode(auth_token.encode('utf-8')), 'utf-8')
 
-    # headers and data for post request for spotify token url
     headers = {'Authorization': f'Basic {auth_base64str}', 'Content-Type': 'application/x-www-form-urlencoded'}
     data = {'grant_type': 'authorization_code', 'code': code, 'redirect_uri': redirect_uri}
     response = post(SPOTIFY_TOKEN_URL, data=data, headers=headers)
-    tokens = json.loads(response.text) # access and refresh tokens for accessing spotify api
+    tokens = json.loads(response.text)
 
-    # Tokens stored
-    request.session['access_token'] = tokens['access_token']
-    request.session['refresh_token'] = tokens['refresh_token']
+    # Store tokens in the user's session
+    #request.session['access_token'] = tokens['access_token']
+    #request.session['refresh_token'] = tokens['refresh_token']
+    #request.session['time_obtained'] = timezone.now().timestamp()  # Store time the token was obtained
+    #request.session['expires_in'] = tokens['expires_in']
 
-    print("Tokens: ", tokens)
+    # Store tokens in the User model
+    user = request.user
+    user.access_token = tokens['access_token']
+    user.refresh_token = tokens['refresh_token']
+    user.time_obtained = timezone.now()  # Store the time the token was obtained in the database
+    user.expires_in = tokens['expires_in']
+    user.save()
 
-    return redirect('/')
+    # Redirect to the original page the user was trying to access
+    next_url = request.session.pop('next', '/')  # Default to home page if 'next' is not set
+    return redirect(next_url)
 
 # # Using access token, get data through spotify's api
 def get_user_profile(request):
@@ -57,6 +136,7 @@ def get_user_profile(request):
         return JsonResponse(response.json())
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
 def get_top_tracks(request):
     try:
         access_token = request.session.get('access_token')
@@ -134,4 +214,5 @@ def index(request):
     return render(request, 'index.html', context)
 
 def welcome(request):
+    print("Welcome User: ", request.user)
     return render(request, 'index.html')

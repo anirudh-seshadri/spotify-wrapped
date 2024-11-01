@@ -1,9 +1,14 @@
-# Ignore the virtual environment
+# Ignore virtual environment
 .venv/
-web_app/__pycache__/    # Ignore Python bytecode
-spotify_wrapped/__pycache__/    # Ignore Python bytecode
+myenv/
+
+# Ignore Python bytecode
+web_app/__pycache__/
+spotify_wrapped/__pycache__/
+
 # Ignore IDE configurations
 .idea/
 
+# Environment variables and database files
 .env
 db.sqlite3
