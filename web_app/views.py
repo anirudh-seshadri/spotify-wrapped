@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from .models import User
 from django.contrib import messages
@@ -103,6 +103,7 @@ def spotify_back(request):
 
     code = request.GET.get('code')
     redirect_uri = request.build_absolute_uri('/back/')
+    print(f"Callback Redirect URI: {redirect_uri}")
     auth_token = f"{settings.SPOTIFY_CLIENT_ID}:{settings.SPOTIFY_CLIENT_SECRET}"
     auth_base64str = str(base64.b64encode(auth_token.encode('utf-8')), 'utf-8')
 
@@ -136,7 +137,90 @@ def get_spotify_data(request):
     response = get(f'{SPOTIFY_API_BASE_URL}/me/top/tracks', headers=headers)
     return json.loads(response.text)
 
-# Home/index page
-@csrf_protect
+# # Using access token, get data through spotify's api
+def get_user_profile(request):
+    try:
+        access_token = request.session.get('access_token')
+        headers = {'Authorization': f'Bearer {access_token}'} # bearer is authorized to make api requests
+        response = get(f'{SPOTIFY_API_BASE_URL}/me', headers=headers) # gets user's profile information
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+def get_top_tracks(request):
+    try:
+        access_token = request.session.get('access_token')
+        time_range = request.GET.get('time_range', 'medium_term')
+        lim = request.GET.get('limit', '20')
+        headers = {'Authorization': f'Bearer {access_token}'}
+        response = get(
+            f'{SPOTIFY_API_BASE_URL}/me/top/tracks',
+            headers=headers,
+            params={'time_range': time_range, 'limit': lim}
+        )
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def get_top_artists(request):
+    try:
+        access_token = request.session.get('access_token')
+        time_range = request.GET.get('time_range', 'medium_term')
+        lim = request.GET.get('limit', '20')
+        headers = {'Authorization': f'Bearer {access_token}'}
+        response = get(
+            f'{SPOTIFY_API_BASE_URL}/me/top/artists',
+            headers=headers,
+            params={'time_range': time_range, 'limit': lim}
+        )
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def get_recently_played(request):
+    try:
+        access_token = request.session.get('access_token')
+        lim = request.GET.get('limit', '20')
+        headers = {'Authorization': f'Bearer {access_token}'}
+        response = get(
+            f'{SPOTIFY_API_BASE_URL}/me/player/recently-played',
+            headers=headers,
+            params={'limit': lim}
+        )
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def get_saved_tracks(request):
+    try:
+        access_token = request.session.get('access_token')
+        lim = request.GET.get('limit', '20')
+        offset = request.GET.get('offset', '0')
+        headers = {'Authorization': f'Bearer {access_token}'}
+        response = get(
+            f'{SPOTIFY_API_BASE_URL}/me/tracks',
+            headers=headers,
+            params={'limit': lim, 'offset': offset}
+        )
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def get_track_features(request, track_id):
+    try:
+        access_token = request.session.get('access_token')
+        headers = {'Authorization': f'Bearer {access_token}'}
+        response = get(
+            f'{SPOTIFY_API_BASE_URL}/audio-features/{track_id}',
+            headers=headers
+        )
+        return JsonResponse(response.json())
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 def index(request):
-    return render(request, 'index.html')  # No need for RequestContext
+    context = {
+        'greeting' : 'How are you, user?'
+    }
+    return render(request, 'index.html', context)
+
+def welcome(request):
+    return render(request, 'index.html')

@@ -6,6 +6,7 @@ spotify_wrapped/__pycache__/    # Ignore Python bytecode
 .idea/
 sort.py
 .env
+db.sqlite3
 myenv
 
 spotify_wrapped/__pycache__/
