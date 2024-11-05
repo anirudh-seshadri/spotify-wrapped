@@ -15,39 +15,86 @@
             font-family: 'Literata', serif;
         }
 
-        /* CSS for the faster swipe-out animation */
-        @keyframes swipeOut {
-            0% {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translateX(-100%);
-                opacity: 0;
-            }
+        /* Styles for the container box */
+        .box-container {
+            background-color: #BB129C;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
         }
 
-        /* Apply the animation to the body */
-        .swipe-transition {
-            animation: swipeOut 1s forwards;  /* Faster animation, 1 second */
+        /* Button and input styles */
+        .button {
+            background-color: #3B0F46;
+            color: #E8DDCA;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #2a0a33;
+        }
+
+        .input-field {
+            background: none;
+            border: none;
+            border-bottom: 2px solid #E8DDCA;
+            color: #FCF3E4;
+            padding: 0.5rem;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            outline: none;
+        }
+
+        /* Back button style */
+        .back-button {
+            color: #FCF3E4;
+            font-size: 1.2rem;
+            cursor: pointer;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+        }
+
+        /* Hidden class to toggle elements */
+        .hidden {
+            display: none;
         }
     </style>
     <script>
-        // JavaScript function to trigger the swipe transition and redirect back to the same page (demo)
-        function triggerTransition() {
-            document.body.classList.add('swipe-transition');  // Apply swipe animation
-            setTimeout(function() {
-                window.location.href = window.location.href;  // Redirect to the same login page (demo)
-            }, 1000);  // Delay for the animation to finish
+        // JavaScript to toggle between login/signup choice, login form, and signup form
+        function showLoginForm() {
+            document.getElementById('choice-container').classList.add('hidden');
+            document.getElementById('signup-form-container').classList.add('hidden');
+            document.getElementById('login-form-container').classList.remove('hidden');
+        }
+
+        function showSignupForm() {
+            document.getElementById('choice-container').classList.add('hidden');
+            document.getElementById('login-form-container').classList.add('hidden');
+            document.getElementById('signup-form-container').classList.remove('hidden');
+        }
+
+        function showChoiceContainer() {
+            document.getElementById('login-form-container').classList.add('hidden');
+            document.getElementById('signup-form-container').classList.add('hidden');
+            document.getElementById('choice-container').classList.remove('hidden');
         }
     </script>
 </head>
 <body class="bg-[#23063A] min-h-screen flex flex-col justify-between">
 
-    <!-- Header with Wavy Background -->
+    <!-- Persistent Banner at the Top -->
     <header class="relative">
         <div class="bg-[#BC7AFF] text-white flex justify-end items-center py-4 px-8">
-            <a href="#" class="hover:underline text-white">Profile</a>
+            <a href="{% url 'login' %}" class="hover:underline text-white">Profile</a>
         </div>
         <!-- SVG for the wave effect -->
         <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
@@ -58,19 +105,36 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex flex-col items-center justify-center flex-grow">
-        <div class="bg-[#BB129C] rounded-3xl shadow-lg p-12 text-center max-w-lg">
-            <h2 class="text-4xl font-bold text-[#FCF3E4] mb-6">One step closer...</h2>
-            <p class="text-[#FCF3E4] font-semibold mb-8">Already have an account?</p>
-            <!-- Demo buttons that redirect back to the same login page -->
-            <a href="javascript:void(0)" onclick="triggerTransition()" class="block mb-4 bg-[#3B0F46] text-[#E8DDCA] py-3 px-8 rounded-full hover:bg-[#2a0a33] transition-all">
-                Yes, take me to login
-            </a>
-            <a href="javascript:void(0)" onclick="triggerTransition()" class="block bg-[#3B0F46] text-[#E8DDCA] py-3 px-8 rounded-full hover:bg-[#2a0a33] transition-all">
-                No, create an account
-            </a>
+    <div class="flex flex-col items-center justify-center flex-grow">
+        <div class="box-container relative text-center text-[#FCF3E4]">
+            <!-- Choice Container -->
+            <div id="choice-container">
+                <h2 class="text-4xl font-bold mb-6">One step closer...</h2>
+                <p class="text-lg font-semibold mb-8">Already have an account?</p>
+                <div onclick="showLoginForm()" class="button mb-4">Yes, take me to login</div>
+                <div onclick="showSignupForm()" class="button">No, create an account</div>
+            </div>
+
+            <!-- Login Form Container -->
+            <div id="login-form-container" class="hidden">
+                <div onclick="showChoiceContainer()" class="back-button">&larr;</div>
+                <h2 class="text-2xl font-bold mb-6">Log in</h2>
+                <input type="text" placeholder="Username" class="input-field">
+                <input type="password" placeholder="Password" class="input-field">
+                <div class="button mt-6">Log in</div>
+            </div>
+
+            <!-- Signup Form Container -->
+            <div id="signup-form-container" class="hidden">
+                <div onclick="showChoiceContainer()" class="back-button">&larr;</div>
+                <h2 class="text-2xl font-bold mb-6">Create Account</h2>
+                <input type="email" placeholder="Email Address" class="input-field">
+                <input type="text" placeholder="Username" class="input-field">
+                <input type="password" placeholder="Password" class="input-field">
+                <div class="button mt-6">Create Account</div>
+            </div>
         </div>
-    </main>
+    </div>
 
     <!-- Footer -->
     <footer class="text-center bg-gray-800 text-white py-4">
