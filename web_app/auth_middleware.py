@@ -1,10 +1,14 @@
 from django.shortcuts import redirect
-from django.utils import timezone
 from datetime import timedelta
 from django.conf import settings
-from requests import post
-import json  # Importing the json module
-from web_app.models import User
+from requests import post, exceptions
+from django.urls import reverse
+import logging
+from datetime import datetime, timedelta, timezone
+from django.utils import timezone as dj_timezone
+
+
+logger = logging.getLogger(__name__)
 
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
 
@@ -13,57 +17,63 @@ class SpotifyAuthMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        print("Auth Middleware")
-        
-        
-        # Skip authentication for certain paths like login, register, spotify login, and back
-        normalized_path = request.path.rstrip('/')
-        if normalized_path in ['/spotify/login', '/back', '/login', '/register']:
+        logger.debug("Auth Middleware")
+
+        # Skip authentication for certain paths
+        exempt_paths = [
+            reverse('spotify_login'),
+            reverse('spotify_back'),
+            reverse('login'),
+            reverse('register'),
+        ]
+        if request.path in exempt_paths:
             return self.get_response(request)
 
-        
         # Check if the user is logged in
         if not request.user.is_authenticated:
-            print("User not logged in or registered")
-            # Store the original path in session and redirect to login
+            logger.debug("User not logged in or registered")
             request.session['next'] = request.path
-            return redirect('/login')
+            return redirect(reverse('login'))
 
+        printSession(request)
         # Check if the user has a valid Spotify access token
-        user = request.user
-        printUser(user)
+        access_token = request.session.get('access_token')
+        refresh_token = request.session.get('refresh_token')
+        expires_in = request.session.get('expires_in')
+        time_obtained_timestamp = request.session.get('time_obtained')
+        time_obtained_timestamp
 
-        if user.access_token and user.time_obtained and user.expires_in:
-            # Check if the token is still valid
-            current_time = timezone.now()
-            token_expiration_time = user.time_obtained + timedelta(seconds=user.expires_in)
-            if current_time >= token_expiration_time:
-                print("User has access token but needs refreshing")
-                # Attempt to refresh the access token using the refresh token
-                if user.refresh_token:
-                    print("Attempting to refresh token")
-                    new_tokens = refresh_spotify_token(user.refresh_token)
-                    if new_tokens:
-                        print("New tokens obtained after refreshing: ", new_tokens)
-                        user.access_token = new_tokens['access_token']
-                        user.expires_in = new_tokens['expires_in']
-                        user.time_obtained = timezone.now()
-                        user.save()
-                    else:
-                        return redirect('/spotify/login/')
-
+        if time_obtained_timestamp:
+            # Convert timestamp to datetime object
+            time_obtained = datetime.fromtimestamp(time_obtained_timestamp, tz=timezone.utc)
         else:
-            print("No access token, redirecting to Spotify login")
-            print("Session Details: ", request.session.keys(), request.session.values())
-            # No access token, redirect to Spotify login
+            # Handle the case where time_obtained is not in the session
+            time_obtained = None
+
+        if access_token and time_obtained and expires_in:
+            # Check if the token is still valid
+            current_time = dj_timezone.now()
+            token_expiration_time = time_obtained + timedelta(seconds=expires_in - 60)  # 60-second buffer
+
+            if current_time >= token_expiration_time:
+                logger.debug("Access token expired, attempting to refresh")
+                if refresh_token:
+                    new_tokens = refresh_spotify_token(refresh_token)
+                    if new_tokens:
+                        logger.debug("New tokens obtained after refreshing")
+                        request.session['access_token'] = new_tokens['access_token']
+                        request.session['expires_in'] = new_tokens['expires_in']
+                        request.session['time_obtained'] = dj_timezone.now()
+                    else:
+                        logger.error("Failed to refresh access token")
+                        return redirect(reverse('spotify_login'))
+        else:
+            logger.debug("No access token, redirecting to Spotify login")
             request.session['next'] = request.path
-            return redirect('/spotify/login/')
+            return redirect(reverse('spotify_login'))
 
-        # Proceed to the next middleware/view
-        print("Proceeding to next middleware/view: ", request.path)
-        response = self.get_response(request)
-        return response
-
+        # Proceed with the request
+        return self.get_response(request)
 
 def refresh_spotify_token(refresh_token):
     data = {
@@ -72,17 +82,18 @@ def refresh_spotify_token(refresh_token):
         'client_id': settings.SPOTIFY_CLIENT_ID,
         'client_secret': settings.SPOTIFY_CLIENT_SECRET,
     }
-    response = post(SPOTIFY_TOKEN_URL, data=data)
-    if response.status_code == 200:
-        return json.loads(response.text)  # Using json to parse the response text
+    try:
+        response = post(SPOTIFY_TOKEN_URL, data=data)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            logger.error(f"Failed to refresh token: {response.status_code} - {response.text}")
+    except exceptions.RequestException as e:
+        logger.exception("Exception occurred while refreshing token")
     return None
 
 
-def printUser(user: User):
-    print("User: ")
-    print("\tAccess Token: " + user.access_token[0:20] + "..." if user.access_token else "None")
-    print("\tTime Obtained: " + str(user.time_obtained))
-    print("\tExpires In: " + str(user.expires_in))
-    print("\tRefresh Token: " + user.refresh_token[0:20] + "..." if user.refresh_token else "None")
-    print("\tToken Expired: ", user.token_expired())
-    print()
+def printSession(request):
+    print("Session:")
+    for key, value in request.session.items():
+        print(f"{key}: {value}")

@@ -2,13 +2,15 @@ from os import access
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login, logout
-from .models import User
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.conf import settings
 import base64
 import json
 from requests import post, get
 from django.utils import timezone
+import urllib.parse
+from django.urls import reverse
 
 SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
@@ -21,23 +23,19 @@ def register(request):
         return redirect('/')
 
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-        # Check if the user already exists
+        # Check if username already exists
         if User.objects.filter(username=username).exists():
             messages.error(request, 'Username already exists.')
-            return redirect('register')
+            return redirect('/register')
 
-        # Create the user
+        # Create and save the new user
         user = User.objects.create_user(username=username, password=password)
-        user.save()
-
-        # Automatically log the user in after registration
-        login(request, user)
-
-        # Redirect to Home
-        return redirect('/')
+        login(request, user)  # Log the user in after registration
+        messages.success(request, 'Registration successful!')
+        return redirect('/')  # Redirect to a 'home' page or any page you prefer
 
     return render(request, 'test_register.html')
 
@@ -48,18 +46,22 @@ def login_view(request):
         return redirect('/')
 
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        # Get username and password from the form
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
         # Authenticate the user
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
+            # Log the user in
             login(request, user)
-            return redirect('/')
+            # Redirect to the home page or any other page
+            return redirect('/')  # Replace 'home' with your desired URL name
         else:
+            # Invalid credentials, add an error message
             messages.error(request, 'Invalid username or password.')
-            return redirect('login')
+            return redirect('/login')  # Redirect back to the login page
 
     return render(request, 'test_login.html')
 
@@ -71,7 +73,7 @@ def logout_view(request):
         return redirect('/login')
 
     logout(request)
-    request.session.flush()
+    messages.info(request, "You have been logged out successfully.")
     
     print("Logging out user ", request.user)
 
@@ -84,8 +86,14 @@ def spotify_authentication(request):
         return redirect('login')
 
     scope = 'user-read-private user-read-email user-top-read'
-    redirect_uri = request.build_absolute_uri('/back/')
-    auth_url = f'{SPOTIFY_AUTH_URL}?client_id={settings.SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri={redirect_uri}&scope={scope}'
+    redirect_uri = request.build_absolute_uri(reverse('spotify_back'))
+    params = {
+        'client_id': settings.SPOTIFY_CLIENT_ID,
+        'response_type': 'code',
+        'redirect_uri': redirect_uri,
+        'scope': scope,
+    }
+    auth_url = f'{SPOTIFY_AUTH_URL}?{urllib.parse.urlencode(params)}'
 
     return redirect(auth_url)
 
@@ -110,29 +118,26 @@ def spotify_back(request):
     tokens = json.loads(response.text)
 
     # Store tokens in the user's session
-    #request.session['access_token'] = tokens['access_token']
-    #request.session['refresh_token'] = tokens['refresh_token']
-    #request.session['time_obtained'] = timezone.now().timestamp()  # Store time the token was obtained
-    #request.session['expires_in'] = tokens['expires_in']
-
-    # Store tokens in the User model
-    user = request.user
-    user.access_token = tokens['access_token']
-    user.refresh_token = tokens['refresh_token']
-    user.time_obtained = timezone.now()  # Store the time the token was obtained in the database
-    user.expires_in = tokens['expires_in']
-    user.save()
+    request.session['access_token'] = tokens['access_token']
+    request.session['refresh_token'] = tokens['refresh_token']
+    request.session['time_obtained'] = timezone.now().timestamp()  # Store time the token was obtained
+    request.session['expires_in'] = tokens['expires_in']
 
     # Redirect to the original page the user was trying to access
     next_url = request.session.pop('next', '/')  # Default to home page if 'next' is not set
     return redirect(next_url)
 
-# # Using access token, get data through spotify's api
+
 def get_user_profile(request):
+    print("Getting profile")
     try:
         access_token = request.session.get('access_token')
         headers = {'Authorization': f'Bearer {access_token}'} # bearer is authorized to make api requests
         response = get(f'{SPOTIFY_API_BASE_URL}/me', headers=headers) # gets user's profile information
+
+        print(f"Response Status Code: {response.status_code}")
+        print(f"Response Content: {response.text}")
+
         return JsonResponse(response.json())
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
