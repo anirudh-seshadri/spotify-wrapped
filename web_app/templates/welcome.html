@@ -15,7 +15,7 @@
             font-family: 'Literata', serif;
         }
 
-        /* CSS for the faster swipe-out animation */
+        /* CSS for the swipe-out animation */
         @keyframes swipeOut {
             0% {
                 transform: translateX(0);
@@ -29,22 +29,22 @@
 
         /* Apply the animation to the body */
         .swipe-transition {
-            animation: swipeOut 1s forwards;  /* Faster animation, 1 second */
+            animation: swipeOut 1s forwards;
         }
     </style>
     <script>
         // JavaScript to delay for 3 seconds, then apply the swipe and redirect
         setTimeout(function() {
-            document.body.classList.add('swipe-transition');  // Trigger the swipe animation after 3 seconds
+            document.querySelector('.main-container').classList.add('swipe-transition');  // Trigger the swipe animation
             setTimeout(function() {
-                window.location.href = "{% url 'login' %}";  // Redirect after 1-second animation completes
+                window.location.href = "{% url 'login' %}";  // Redirect after animation completes
             }, 1000);  // 1-second delay for the animation to complete
         }, 3000);  // Stay on the welcome screen for 3 seconds before starting the transition
     </script>
 </head>
 <body class="bg-[#23063A] min-h-screen flex flex-col justify-between">
 
-    <!-- Header with Wavy Background -->
+    <!-- Persistent Banner at the Top (copied from login page) -->
     <header class="relative">
         <div class="bg-[#BC7AFF] text-white flex justify-end items-center py-4 px-8">
             <a href="{% url 'login' %}" class="hover:underline text-white">Profile</a>
@@ -57,9 +57,20 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="welcome-container flex flex-col items-center justify-center flex-grow text-center text-[#FCF3E4]">
-        <h1 class="text-4xl font-bold mb-8">Create a Wrapped Account</h1>
+    <!-- Main Container for Decorative Elements and Content -->
+    <div class="main-container flex flex-col items-center justify-center relative flex-grow">
+        
+        <!-- Decorative Elements on the Same Layer as Content -->
+        <div class="background-design-1"></div>
+        <div class="background-design-2"></div>
+        <div class="background-design-3"></div>
+        <div class="background-design-4"></div>
+        <div class="background-design-5"></div>
+
+        <!-- Main Content -->
+        <div class="welcome-container text-center text-[#FCF3E4]">
+            <h1 class="text-4xl font-bold mb-8">Create a Wrapped Account</h1>
+        </div>
     </div>
 
     <!-- Footer -->

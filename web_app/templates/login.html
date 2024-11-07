@@ -13,6 +13,7 @@
         /* Apply the Literata font to the entire page */
         body {
             font-family: 'Literata', serif;
+            font-size: 40%; /* Keep the font size as provided */
         }
 
         /* Styles for the container box */
@@ -26,6 +27,14 @@
             transition: all 0.3s ease;
         }
 
+        /* Smaller font size for "One step closer..." and "Already have an account?" */
+        #choice-container h2 {
+            font-size: 1.8rem; /* Smaller font size */
+        }
+        #choice-container p {
+            font-size: 1.3rem; /* Smaller font size */
+        }
+
         /* Button and input styles */
         .button {
             background-color: #3B0F46;
@@ -35,6 +44,7 @@
             font-weight: bold;
             text-align: center;
             cursor: pointer;
+            font-size: .9rem; /* Increased font size for buttons */
             transition: background-color 0.3s;
         }
 
@@ -53,6 +63,11 @@
             outline: none;
         }
 
+        /* Profile link font size */
+        .profile-link {
+            font-size: 1.2rem; /* Increase font size to match welcome page */
+        }
+
         /* Back button style */
         .back-button {
             color: #FCF3E4;
@@ -67,7 +82,30 @@
         .hidden {
             display: none;
         }
+
+        /* Background design styles */
+        .background-design-1, .background-design-2, .background-design-3, .background-design-4, .background-design-5 {
+            position: absolute;
+            /* Add positioning, sizing, and color properties for each design */
+        }
+        /* Customize each background element */
+        .background-design-1 {
+            /* Specific styles */
+        }
+        .background-design-2 {
+            /* Specific styles */
+        }
+        .background-design-3 {
+            /* Specific styles */
+        }
+        .background-design-4 {
+            /* Specific styles */
+        }
+        .background-design-5 {
+            /* Specific styles */
+        }
     </style>
+
     <script>
         // JavaScript to toggle between login/signup choice, login form, and signup form
         function showLoginForm() {
@@ -94,7 +132,7 @@
     <!-- Persistent Banner at the Top -->
     <header class="relative">
         <div class="bg-[#BC7AFF] text-white flex justify-end items-center py-4 px-8">
-            <a href="{% url 'login' %}" class="hover:underline text-white">Profile</a>
+            <a href="{% url 'login' %}" class="hover:underline text-white profile-link">Profile</a>
         </div>
         <!-- SVG for the wave effect -->
         <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
@@ -103,6 +141,13 @@
             </svg>
         </div>
     </header>
+
+    <!-- Background Decorative Elements -->
+    <div class="background-design-1"></div>
+    <div class="background-design-2"></div>
+    <div class="background-design-3"></div>
+    <div class="background-design-4"></div>
+    <div class="background-design-5"></div>
 
     <!-- Main Content -->
     <div class="flex flex-col items-center justify-center flex-grow">
