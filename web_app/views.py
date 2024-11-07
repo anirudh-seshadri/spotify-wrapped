@@ -48,3 +48,5 @@ def slide2(request):
     return render(request, 'slide2.html')
 def slide3(request):
     return render(request, 'slide3.html')
+def welcome(request):
+    return render(request, 'index.html')

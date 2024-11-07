@@ -1,28 +1,23 @@
 {% load static %}
-{% csrf_token %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Literata:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static '/styles.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDRbtKq5nh6cpCD_HVe09TqO7nuZEttfUk" defer></script>
-    <script src="{% static 'web_app/js/map.js' %}" defer></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <header class="header">
-        <div class="profile-button">
-            <i class="fas fa-user-circle"></i>
-            Profile
-        </div>
+    <header>
+        <nav>
+            <a href="#">Welcome</a>
+            <a href="{% url 'spotify_login' %}">Login with Spotify</a>
+            <a href="#">Profile</a>
+        </nav>
     </header>
 
     <div class="welcome-container">
-        <h1>Create a Wrapped Account</h1>
+        <h1>WELLLL YA GONE AND DONE IT MIAAA</h1>
         <p>{{ greeting }}</p> <!-- This should display "How are you, user?" -->
     </div>
 
@@ -32,8 +27,6 @@
         <button onclick="fetchData('/api/top-artists/')">Get Top Artists</button>
         <button onclick="fetchData('/api/recently-played/')">Get Recently Played</button>
         <button onclick="fetchData('/api/saved-tracks/')">Get Saved Tracks</button>
-        <button onclick="window.location.href='{% url 'game' %}'">Play Game</button>
-
     </div>
 
     <pre id="result" style="margin-top: 20px;"></pre>
