@@ -50,3 +50,5 @@ def slide3(request):
     return render(request, 'slide3.html')
 def welcome(request):
     return render(request, 'index.html')
+def game(request):
+    return render(request, 'game.html')
