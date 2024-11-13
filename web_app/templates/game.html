@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Wrapped Game</title>
+    <link rel="stylesheet" href="{% static 'web_app/css/styles.css' %}">
+    <script src="https://kit.fontawesome.com/4ce1eac851.js" crossorigin="anonymous"></script>
+    <script src="{% static 'web_app/js/game.js' %}" defer></script>
+    {% comment %} <script src="{% static 'web_app/js/gamestart.js' %}" defer></script> {% endcomment %}
+    {% comment %} <script src="{% static 'web_app/js/player.js' %}" defer></script> {% endcomment %}
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#">Welcome</a>
+            <a href="{% url 'spotify_login' %}">Login with Spotify</a>
+            <a href="#">Profile</a>
+        </nav>
+    </header>
+    <div class="welcome-container">
+        <h1>AY PLAY A GAME</h1>
+    </div>
+    <div id="play">
+        <i class="fa-solid fa-play"></i>
+    </div>
+    <footer>
+        <p>© 2024 Your Project</p>
+    </footer>
+</body>
+</html>

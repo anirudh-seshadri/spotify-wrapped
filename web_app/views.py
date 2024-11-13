@@ -133,5 +133,43 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
+def validate_spotify_id(request, id, type):
+    # Ensure type is valid
+    if type not in ['artist', 'album', 'playlist', 'track']:
+        return JsonResponse({'error': 'Invalid type specified'}, status=400)
+
+    # Get access token from session
+    access_token = request.session.get('access_token')
+
+    if not access_token:
+        return JsonResponse({'error': 'Access token not found'}, status=400)
+
+    # Set up the endpoint based on the type
+    endpoint = f"{SPOTIFY_API_BASE_URL}/{type}s/{id}"
+
+    # Set up headers with Authorization
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    try:
+        # Make the GET request to Spotify API
+        response = get(endpoint, headers=headers)
+
+        # Check if the response is valid
+        if response.status_code == 200:
+            return JsonResponse({'valid': True})
+        elif response.status_code == 404:
+            return JsonResponse({'valid': False})
+        else:
+            return JsonResponse({'error': 'Spotify API request failed'}, status=response.status_code)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
 def welcome(request):
     return render(request, 'index.html')
+
+def game(request):
+    return render(request, 'game.html')
+
+def game_intro(request):
+    return render(request, 'gameintro.html')

@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Wrapped Game</title>
+    <link rel="stylesheet" href="{% static 'web_app/css/styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#">Welcome</a>
+            <a href="{% url 'spotify_login' %}">Login with Spotify</a>
+            <a href="#">Profile</a>
+        </nav>
+    </header>
+    <div class="welcome-container">
+        <h1>AY WELCOME TO DA GAME</h1>
+        <p>{{ greeting }}</p> <!-- This should display "How are you, user?" -->
+    </div>
+    <div style="margin-top: 20px;">
+        
+    <main>
+        <div id="content">
+            <div id="select-div">
+                <select id="select" name="select">
+                    <option hidden disabled selected>Choose an alternative...</option>
+                    <option value="1">Artist (by name)</option>
+                    <option value="2">Artist (by ID)</option>
+                    <option value="3">By Playlist</option>
+                    <option value="4">By Album</option>
+                    <option value="5">Specific song</option>
+                    <option value="6">My top 50 songs</option>
+                    <option value="7">My liked songs</option>
+                </select>
+                <textarea rows="1" disabled></textarea>
+            </div>
+            <button id="button">Done</button>
+        </div>
+    </main>
+
+    </div>
+    <pre id="result" style="margin-top: 20px;"></pre>
+    <footer>
+        <p>© 2024 Your Project</p>
+    </footer>
+    <script src="{% static 'web_app/js/gamestart.js' %}" defer></script>
+</body>
+</html>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped Home</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'web_app/css/styles.css' %}">
 </head>
 <body>
     <header>
@@ -27,6 +27,7 @@
         <button onclick="fetchData('/api/top-artists/')">Get Top Artists</button>
         <button onclick="fetchData('/api/recently-played/')">Get Recently Played</button>
         <button onclick="fetchData('/api/saved-tracks/')">Get Saved Tracks</button>
+        <a href="{% url 'gameintro' %}">Play game??</a>
     </div>
 
     <pre id="result" style="margin-top: 20px;"></pre>
