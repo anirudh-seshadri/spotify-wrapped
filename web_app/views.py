@@ -164,6 +164,24 @@ def validate_spotify_id(request, id, type):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+    
+def get_spotify_track(request, track_id):
+    endpoint = f"https://api.spotify.com/v1/tracks/{track_id}"
+    access_token = request.session.get('access_token')
+
+    headers = {'Authorization': f'Bearer {access_token}'}
+    response = get(endpoint, headers=headers)
+
+    if response.status_code == 200:
+        response_data = response.json()
+        song_data = {
+            "song": f"{response_data['name']} - {response_data['artists'][0]['name']}",
+            "uri": f"spotify:track:{track_id}",
+            "duration": response_data['duration_ms']
+        }
+        return JsonResponse(song_data)
+    else:
+        return JsonResponse({"error": "Failed to fetch song data"}, status=500)
 
 def welcome(request):
     return render(request, 'index.html')

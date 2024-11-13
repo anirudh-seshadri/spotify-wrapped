@@ -34,6 +34,23 @@ function newSong() {
             break; 
         case 5: //Specific song
             console.log("YA PICKED SONG")
+            const endpoint = `/get-spotify-track/${startupID}/`;
+
+            fetch(endpoint)
+            .then(response => response.json())
+            .then(responseData => {
+                if (responseData.error) {
+                    console.error(responseData.error);
+                    return;
+                }
+
+                const song = responseData.song;
+
+                localStorage.setItem('uri', responseData.uri);
+                localStorage.setItem('song', song);
+                localStorage.setItem('duration', responseData.duration);
+            })
+            .catch(error => console.error(error));
 
             break; 
         case 6: //My top 50 songs

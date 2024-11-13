@@ -12,6 +12,8 @@ urlpatterns = [
     path('api/saved-tracks/', views.get_saved_tracks, name='get_saved_tracks'),
     path('api/track-features/<str:track_id>/', views.get_track_features, name='get_track_features'),
     path('api/validate-spotify-id/<str:type>/<str:id>/', views.validate_spotify_id, name='validate_spotify_id'),
+    path('get-spotify-track/<str:track_id>/', views.get_spotify_track, name='get_spotify_track'),
+
 
 
     path('', views.welcome, name='welcome'),
