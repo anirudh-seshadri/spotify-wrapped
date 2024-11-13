@@ -41,7 +41,7 @@ button.addEventListener("click", async function() {
 
         let isValid = false;
 
-        if (startupValue === 6 || startupValue === 7) {
+        if (startupValue === 1 || startupValue === 3 || startupValue === 4 || startupValue === 6 || startupValue === 7) {
             isValid = true;
         } else if (startupValue > 0 && startupID.length > 0) {
             isValid = await validateSpotifyID(startupID, getTypeForValidation(startupValue));

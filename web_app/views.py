@@ -165,6 +165,75 @@ def validate_spotify_id(request, id, type):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
     
+def get_tracks(request, content_type, query):
+    access_token = request.session.get('access_token')
+
+    limit = 50  
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    if content_type == 'artist':
+        endpoint = f"https://api.spotify.com/v1/search?q=artist:{query}&type=track&limit={limit}"
+    elif content_type == 'playlist':
+        endpoint = f"https://api.spotify.com/v1/search?q=playlist:{query}&type=track&limit={limit}"
+    elif content_type == 'album':
+        endpoint = f"https://api.spotify.com/v1/search?q=album:{query}&type=track&limit={limit}"
+    elif content_type == 'top50':
+        endpoint = f"https://api.spotify.com/v1/me/top/tracks?limit={limit}"
+    elif content_type == 'liked':
+        endpoint = f"https://api.spotify.com/v1/me/tracks?limit={limit}"
+    else:
+        return JsonResponse({"error": "Invalid content type specified"}, status=400)
+
+    response = get(endpoint, headers=headers)
+
+    if response.status_code == 200:
+        data = response.json()
+
+        track_data = []
+
+        if content_type in ['artist', 'playlist', 'album']:
+            tracks = data.get('tracks', {}).get('items', [])
+            for track in tracks:
+                track_item = {
+                    "title": track.get("name"),
+                    "artist": track["artists"][0]["name"] if track.get("artists") else "Unknown",
+                    "uri": track.get("uri"),
+                    "duration": track.get("duration_ms")
+                }
+                if not any(existing["title"] == track_item["title"] for existing in track_data):
+                    track_data.append(track_item)
+
+        elif content_type == 'top50':
+            tracks = data.get('items', [])
+            for track in tracks:
+                track_item = {
+                    "title": track.get("name"),
+                    "artist": track["artists"][0]["name"] if track.get("artists") else "Unknown",
+                    "uri": track.get("uri"),
+                    "duration": track.get("duration_ms")
+                }
+                if not any(existing["title"] == track_item["title"] for existing in track_data):
+                    track_data.append(track_item)
+
+        elif content_type == 'liked':
+            tracks = data.get('items', [])
+            for track in tracks:
+                track_item = {
+                    "title": track['track'].get("name"),
+                    "artist": track['track']["artists"][0]["name"] if track['track'].get("artists") else "Unknown",
+                    "uri": track['track'].get("uri"),
+                    "duration": track['track'].get("duration_ms")
+                }
+
+                if not any(existing["title"] == track_item["title"] for existing in track_data):
+                    track_data.append(track_item)
+
+        return JsonResponse({"tracks": track_data}, safe=False)
+    else:
+        # Handle error
+        return JsonResponse({"error": "Failed to retrieve data from Spotify"}, status=response.status_code)
+
+
 def get_spotify_track(request, track_id):
     endpoint = f"https://api.spotify.com/v1/tracks/{track_id}"
     access_token = request.session.get('access_token')
