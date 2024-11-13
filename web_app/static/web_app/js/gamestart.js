@@ -39,19 +39,23 @@ button.addEventListener("click", async function() {
         startupValue = parseInt(select.value); 
         startupID = textarea.value; 
 
-        if((startupValue > 0 && startupID.length > 0) || startupValue == 6 || startupValue == 7) {
-            const isValid = await validateSpotifyID(startupID, getTypeForValidation(startupValue));
-           
-            if(isValid){
-                newPage = true; 
+        let isValid = false;
+
+        if (startupValue === 6 || startupValue === 7) {
+            isValid = true;
+        } else if (startupValue > 0 && startupID.length > 0) {
+            isValid = await validateSpotifyID(startupID, getTypeForValidation(startupValue));
+        }
+
+        if (isValid) {
+            newPage = true; 
     
-                localStorage.setItem("value", startupValue);
-                localStorage.setItem("id", startupID);
-                
-                window.location.href = "/game/";
-            }else{
-                alert("WRONG ID YA SUCK!");
-            }
+            localStorage.setItem("value", startupValue);
+            localStorage.setItem("id", startupID);
+            
+            window.location.href = "/game/";
+        } else {
+            alert("WRONG ID YA SUCK!");
         }
     }
 });
