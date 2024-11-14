@@ -1,6 +1,7 @@
 const startupValue = parseInt(localStorage.getItem('value'));
 const startupID = localStorage.getItem('id');
 
+var selectedTrack = {};
 var recent = [];
 const whileMargin = 50; 
 const probabilityLimit = 20; 
@@ -30,11 +31,13 @@ function newSong() {
             break; 
         case 3: //By Playlist
             console.log("YA PICKED PLAYLIST")
+            getTracks('playlist', startupID)
 
 
             break; 
         case 4: //By Album 
             console.log("YA PICKED ALBUM")
+            getTracks('album', startupID)
 
             break; 
         case 5: //Specific song
@@ -44,10 +47,12 @@ function newSong() {
             break; 
         case 6: //My top 50 songs
             console.log("YA PICKED TOP 50 SONGS")
+            getTracks('top50', 'placeholder')
 
             break; 
         case 7: //My liked songs
             console.log("YA PICKED LIKED SONGS")
+            getTracks('liked', 'placeholder')
 
             break; 
         default: 
@@ -69,7 +74,6 @@ function getTracks(contentType, query) {
 
                 const lastItems = recent.length > probabilityLimit ? recent.slice(-probabilityLimit) : recent;
                 let k = 0;
-                let selectedTrack = null;
 
                 do {
                     const index = Math.floor(Math.random() * tracks.length);
@@ -86,8 +90,6 @@ function getTracks(contentType, query) {
                         artist: selectedTrack.artist,
                         trackId: selectedTrack.uri.split(':')[2]
                     });
-                    console.log('track uri: ' + selectedTrack.uri)
-                    console.log('track id: ' + selectedTrack.uri)
                 }else {
                     console.log("No valid track selected after multiple attempts.");
                 }
@@ -104,19 +106,20 @@ function fetchTrackDetails(trackID) {
     console.log('FETCHING SPECIFIC TRACK!!')
     const endpoint = `/get-spotify-track/${trackID}/`;
 
-            fetch(endpoint)
-            .then(response => response.json())
-            .then(responseData => {
-                if (responseData.error) {
-                    console.error(responseData.error);
-                    return;
-                }
 
-                const song = responseData.song;
+    fetch(endpoint)
+    .then(response => response.json())
+    .then(responseData => {
+        if (responseData.error) {
+            console.error(responseData.error);
+            return;
+        }
 
-                localStorage.setItem('uri', responseData.uri);
-                localStorage.setItem('song', song);
-                localStorage.setItem('duration', responseData.duration);
-            })
-            .catch(error => console.error(error));
+        selectedTrack = responseData;
+
+        localStorage.setItem('uri', selectedTrack.uri);
+        localStorage.setItem('song', selectedTrack.song);
+        localStorage.setItem('duration', selectedTrack.duration);
+    })
+    .catch(error => console.error(error));
 }

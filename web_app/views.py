@@ -1,9 +1,8 @@
 from os import access
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 import os
-from django.shortcuts import redirect
 from django.conf import settings
 import base64
 import json
@@ -15,7 +14,7 @@ SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1'
 
 # Takes user to Spotify's auth url
 def spotify_authentication(request):
-    scope = 'user-read-private user-read-email user-top-read user-read-recently-played user-library-read' # Access to reading profile data, email address, top tracks that they have played
+    scope = 'user-read-private user-read-email user-top-read user-read-recently-played user-library-read streaming user-read-playback-state user-modify-playback-state' # Access to reading profile data, email address, top tracks that they have played
     host = request.get_host().replace('127.0.0.1', 'localhost')
     redirect_uri = f'http://{host}/back/'  # Builds the redirect URI and takes to back endpoint
     auth_url = f'{SPOTIFY_AUTH_URL}?client_id={settings.SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri={redirect_uri}&scope={scope}' # client ID, auth code, uri to get redirected after login, scope
@@ -256,7 +255,12 @@ def welcome(request):
     return render(request, 'index.html')
 
 def game(request):
-    return render(request, 'game.html')
+    access_token = request.session.get('access_token')
+    print('Access Token: ', access_token)
+
+    if not access_token:
+        return redirect('welcome')
+    return render(request, 'game.html', {'access_token': access_token})
 
 def game_intro(request):
     return render(request, 'gameintro.html')

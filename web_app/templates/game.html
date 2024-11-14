@@ -7,9 +7,11 @@
     <title>Spotify Wrapped Game</title>
     <link rel="stylesheet" href="{% static 'web_app/css/styles.css' %}">
     <script src="https://kit.fontawesome.com/4ce1eac851.js" crossorigin="anonymous"></script>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script src="{% static 'web_app/js/player.js' %}" defer></script>
     <script src="{% static 'web_app/js/game.js' %}" defer></script>
     {% comment %} <script src="{% static 'web_app/js/gamestart.js' %}" defer></script> {% endcomment %}
-    {% comment %} <script src="{% static 'web_app/js/player.js' %}" defer></script> {% endcomment %}
+
 </head>
 <body>
     <header>
@@ -22,9 +24,19 @@
     <div class="welcome-container">
         <h1>AY PLAY A GAME</h1>
     </div>
-    <div id="play">
-        <i class="fa-solid fa-play"></i>
+    <div id="audio-player">
+        <button id="play"> Play 6-second preview</button>
+        <audio id="audioPlayer" controls style="display: none;"></audio>
     </div>
+
+    {% if access_token %}
+    <!-- Use json_script to safely pass the token to JavaScript -->
+        <script id="access-token" type="application/json">
+            "{{ access_token }}"
+        </script>
+    {% endif %}
+
+    {% comment %} <i class="fa-solid fa-play"></i> {% endcomment %}
     <footer>
         <p>© 2024 Your Project</p>
     </footer>
