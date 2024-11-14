@@ -130,51 +130,66 @@
 // }  
 
 window.onSpotifyWebPlaybackSDKReady = () => {
-    // let token = document.getElementById('audio-player').getAttribute('data-token');
-    // console.log('poop');
-    // console.log(token);
+    // Use the getAccessToken function to retrieve the access token asynchronously
+    getAccessToken().then(accessToken => {
+        if (accessToken) {
+            console.log('Access Token: ' + accessToken);
 
-    // token = decodeURIComponent(token);
-    // console.log(token);
+            // Initialize the Spotify player once the access token is obtained
+            const player = new Spotify.Player({
+                name: 'Web Playback SDK Quick Start Player',
+                getOAuthToken: cb => { cb(accessToken); },  // Use the access token
+                volume: 0.5
+            });
 
-    // const token = 'BQAyoAXAJu652M3jK6fyo3-xzVF9hK7YDKqPRGcsG3fJHAeBhLUcIeqE6l-m3fdab-eeQtRZMJr2Qlnog60PK7gsrCJWSz2BnvmjkOTixUh9N0Mkc8F4j57O1FRdJST8STph2GWqYAn7m6YMyixzh6YDktPcUFsUbF06UOmm5Ytr_BEAjEk5BLChwgT_0tzPMziHU8W9GVDRFzDPTwtQ4Pjf8hPVJOql56Uy3RGeeoaC77oEGSWvzeCYGg'
+            // Ready
+            player.addListener('ready', ({ device_id }) => {
+                console.log('Ready with Device ID', device_id);
+            });
 
-    const token = JSON.parse(document.getElementById('access-token').textContent);
-    console.log('Retrieved Token:', token);  // Optional: Check the token in the console
+            // Not Ready
+            player.addListener('not_ready', ({ device_id }) => {
+                console.log('Device ID has gone offline', device_id);
+            });
 
+            player.addListener('initialization_error', ({ message }) => {
+                console.log('INITIALIZATION');
+                console.error(message);
+            });
 
-    const player = new Spotify.Player({
-        name: 'Web Playback SDK Quick Start Player',
-        getOAuthToken: cb => { cb(token); },
-        volume: 0.5
+            player.addListener('authentication_error', ({ message }) => {
+                console.log('AUTHENTICATION');   
+                console.error(message);
+            });
+
+            player.addListener('account_error', ({ message }) => {
+                console.log('ACCOUNT ERROR');
+                console.error(message);
+            });
+
+            player.connect();  // Connect to the player once it's ready
+        } else {
+            console.error('No access token found.');
+        }
+    }).catch(error => {
+        console.error('Error retrieving access token:', error);
     });
+};
 
-    // Ready
-    player.addListener('ready', ({ device_id }) => {
-        console.log('Ready with Device ID', device_id);
-    });
 
-    // Not Ready
-    player.addListener('not_ready', ({ device_id }) => {
-        console.log('Device ID has gone offline', device_id);
-    });
-
-    player.addListener('initialization_error', ({ message }) => {
-        console.log('INITIALIZATION');
-        console.error(message);
-    });
-
-    player.addListener('authentication_error', ({ message }) => {
-        console.log('AUTHENTICATION');   
-        console.error(message);
-    });
-
-    player.addListener('account_error', ({ message }) => {
-        console.log('ACCOUNT ERROR');
-        console.error(message);
-    });
-
-    player.connect();
+async function getAccessToken() {
+    try {
+        const response = await fetch('/get_access_token/');
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data.access_token;  // Return the access token from the response
+        } else {
+            console.error('Failed to retrieve access token:', response.statusText);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error fetching access token:', error);
+        return null;
+    }
 }
-
-

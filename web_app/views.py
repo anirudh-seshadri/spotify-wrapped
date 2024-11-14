@@ -251,6 +251,14 @@ def get_spotify_track(request, track_id):
     else:
         return JsonResponse({"error": "Failed to fetch song data"}, status=500)
 
+def get_access_token(request):
+    access_token = request.session.get('access_token')  
+    
+    if access_token:
+        return JsonResponse({'access_token': access_token})
+    else:
+        return JsonResponse({'error': 'Access token not found'}, status=400)
+
 def welcome(request):
     return render(request, 'index.html')
 
@@ -260,7 +268,7 @@ def game(request):
 
     if not access_token:
         return redirect('welcome')
-    return render(request, 'game.html', {'access_token': access_token})
+    return render(request, 'game.html')
 
 def game_intro(request):
     return render(request, 'gameintro.html')

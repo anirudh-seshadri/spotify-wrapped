@@ -28,14 +28,6 @@
         <button id="play"> Play 6-second preview</button>
         <audio id="audioPlayer" controls style="display: none;"></audio>
     </div>
-
-    {% if access_token %}
-    <!-- Use json_script to safely pass the token to JavaScript -->
-        <script id="access-token" type="application/json">
-            "{{ access_token }}"
-        </script>
-    {% endif %}
-
     {% comment %} <i class="fa-solid fa-play"></i> {% endcomment %}
     <footer>
         <p>© 2024 Your Project</p>

@@ -14,6 +14,8 @@ urlpatterns = [
     path('api/validate-spotify-id/<str:type>/<str:id>/', views.validate_spotify_id, name='validate_spotify_id'),
     path('get-spotify-track/<str:track_id>/', views.get_spotify_track, name='get_spotify_track'),
     path('get_tracks/<str:content_type>/<str:query>/', views.get_tracks, name='get_tracks'),
+    path('get_access_token/', views.get_access_token, name='get_access_token'),  # Endpoint for access token
+
 
 
 
