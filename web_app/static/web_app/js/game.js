@@ -84,6 +84,7 @@ function getTracks(contentType, query) {
 
                 if (selectedTrack) {
                     fetchTrackDetails(selectedTrack.uri.split(':')[2]);
+
                     // Add the selected track to the recent list
                     recent.push({
                         title: selectedTrack.title,
@@ -117,9 +118,12 @@ function fetchTrackDetails(trackID) {
 
         selectedTrack = responseData;
 
-        localStorage.setItem('uri', selectedTrack.uri);
+        localStorage.setItem('trackUri', selectedTrack.uri);
         localStorage.setItem('song', selectedTrack.song);
         localStorage.setItem('duration', selectedTrack.duration);
+
+        localStorage.setItem('trackReady', true);
+
     })
     .catch(error => console.error(error));
 }

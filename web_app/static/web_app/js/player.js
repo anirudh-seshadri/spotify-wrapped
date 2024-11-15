@@ -1,149 +1,26 @@
-// let player;  // Declare the player variable globally so it can be accessed after initialization
-
-// window.onSpotifyWebPlaybackSDKReady = () => {
-//     const token = document.getElementById('audio-player').getAttribute('data-token');
-//     console.log('poop');
-//     console.log(token);
-
-//     if (!token) {
-//         console.error('No access token available!');
-//         return;  // Early exit if no token is found
-//     }
-
-//     player = new Spotify.Player({
-//         name: 'My Web Playback SDK Player',
-//         getOAuthToken: cb => { cb(token); },
-//         volume: 0.5
-//     });
-
-//     // Error handling
-//     player.addListener('initialization_error', ({ message }) => { console.error(message); });
-//     player.addListener('authentication_error', ({ message }) => { console.error(message); });
-//     player.addListener('account_error', ({ message }) => { console.error(message); });
-//     player.addListener('playback_error', ({ message }) => { console.error(message); });
-
-//     // Playback status updates
-//     player.addListener('player_state_changed', state => { console.log(state); });
-
-//     // Ready
-//     player.addListener('ready', ({ device_id }) => {
-//         console.log('Ready with Device ID', device_id);
-//     });
-
-//     // Not Ready
-//     player.addListener('not_ready', ({ device_id }) => {
-//         console.log('Device ID has gone offline', device_id);
-//     });
-
-//     // Connect to the player!
-//     player.connect();
-// };
-
-// // Add the event listener to the play button to start playing the song when clicked
-// document.getElementById("play").addEventListener("click", function() {
-//     if (!player) {
-//         console.error("Player is not initialized yet.");
-//         return;
-//     }
-
-//     // Example: Playing a specific song (replace with actual track URI you want to play)
-//     const trackUri = "spotify:track:3n3PpTejTy2lGZtH60RnpP";  // Replace with the URI of the track you want to play
-    
-//     player.togglePlay()  // Ensure that the player starts playing
-//         .then(() => {
-//             return player.play({ uris: [trackUri] });  // Play the track using its URI
-//         })
-//         .catch(error => {
-//             console.error("Error while trying to play the track:", error);
-//         });
-// });
-
-// player.js
-// window.onSpotifyWebPlaybackSDKReady = () => {
-//     const player = new Spotify.Player({
-//         name: 'Your Web Player',
-//         getOAuthToken: cb => { cb(token); },
-//         volume: 0.5
-//     });
-
-//     const token = document.getElementById('audio-player').getAttribute('data-token');
-//     console.log('poop');
-//     console.log(token);
-
-//     player.addListener('initialization_error', ({ message }) => { console.error(message); });
-//     player.addListener('authentication_error', ({ message }) => { console.error(message); });
-//     player.addListener('account_error', ({ message }) => { console.error(message); });
-//     player.addListener('playback_error', ({ message }) => { console.error(message); });
-
-//     player.addListener('player_state_changed', state => {
-//         console.log(state);
-//     });
-
-//     player.addListener('ready', ({ device_id }) => {
-//         console.log('The Web Playback SDK is ready with Device ID', device_id);
-//     });
-
-//     player.addListener('not_ready', ({ device_id }) => {
-//         console.log('The Web Playback SDK has left the device', device_id);
-//     });
-
-//     // Initialize the player
-//     player.connect();
-// };
-
-// window.onSpotifyWebPlaybackSDKReady = () => {
-//     const token = document.getElementById('audio-player').getAttribute('data-token');
-//     console.log('poop');
-//     console.log(token);
-//     const player = new Spotify.Player({
-//       name: 'Web Playback SDK Quick Start Player',
-//       getOAuthToken: cb => { cb(token); },
-//       volume: 0.5
-//     });
-
-//     // Ready
-//     player.addListener('ready', ({ device_id }) => {
-//       console.log('Ready with Device ID', device_id);
-//     });
-  
-//     // Not Ready
-//     player.addListener('not_ready', ({ device_id }) => {
-//       console.log('Device ID has gone offline', device_id);
-
-//       player.addListener('initialization_error', ({ message }) => {
-//         console.error(message);
-//     });
-  
-//     player.addListener('authentication_error', ({ message }) => {
-//         console.error(message);
-//     });
-  
-//     player.addListener('account_error', ({ message }) => {
-//         console.error(message);
-//     });
-  
-//     });
-//     console.log('peepee')
-
-//     player.connect();
-
-// }  
+let trackReady = false;
+let device_id;
+let player;
+let accessToken;
 
 window.onSpotifyWebPlaybackSDKReady = () => {
+
     // Use the getAccessToken function to retrieve the access token asynchronously
-    getAccessToken().then(accessToken => {
-        if (accessToken) {
+    getAccessToken().then(token => {
+        if (token) {
+            accessToken = token;
             console.log('Access Token: ' + accessToken);
 
             // Initialize the Spotify player once the access token is obtained
-            const player = new Spotify.Player({
+            player = new Spotify.Player({
                 name: 'Web Playback SDK Quick Start Player',
                 getOAuthToken: cb => { cb(accessToken); },  // Use the access token
                 volume: 0.5
             });
 
             // Ready
-            player.addListener('ready', ({ device_id }) => {
+            player.addListener('ready', ({ device_id: readyDeviceId }) => {
+                device_id = readyDeviceId;
                 console.log('Ready with Device ID', device_id);
             });
 
@@ -176,6 +53,40 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     });
 };
 
+const playSixSecondClip = async () => {
+    try {
+        if (!device_id) {
+            console.error('Device ID not available');
+            return;
+        }
+
+        const trackUri = localStorage.getItem('trackUri');
+        console.log('trackURi: ' + trackUri);
+
+        // Start playback at the beginning of the track
+        await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ uris: [trackUri] })
+        });
+
+        // Wait for six seconds, then pause the playback
+        setTimeout(async () => {
+            await player.pause();
+            console.log('Paused after six seconds');
+        }, 6000); // 6000 milliseconds = 6 seconds
+    } catch (error) {
+        console.error('Error playing the track:', error);
+    }
+};
+
+document.getElementById('play').onclick = function() {
+    console.log('PLAYING');
+    playSixSecondClip();
+};
 
 async function getAccessToken() {
     try {
