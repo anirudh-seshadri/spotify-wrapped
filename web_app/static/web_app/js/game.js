@@ -7,17 +7,6 @@ const whileMargin = 50;
 const probabilityLimit = 20; 
 
 function newSong() {
-
-    specificSong = false;
-
-    artistName = ''; 
-    searchType = '';
-    limit = 20; 
-    endpoint = '';
-
-    data = [];
-    index = -1; 
-
     switch(startupValue) {
         case 1: // By Artist (Name)
             console.log("YA PICKED ARTIST BY NAME")
@@ -119,11 +108,19 @@ function fetchTrackDetails(trackID) {
         selectedTrack = responseData;
 
         localStorage.setItem('trackUri', selectedTrack.uri);
-        localStorage.setItem('song', selectedTrack.song);
+        localStorage.setItem('songName', selectedTrack.song.split(' - ')[0]);
+        localStorage.setItem('artistName', selectedTrack.song.split(' - ')[1]);
         localStorage.setItem('duration', selectedTrack.duration);
+        localStorage.setItem('tries', 0);
 
-        localStorage.setItem('trackReady', true);
+        // console.log('selectedTrack:', JSON.stringify(selectedTrack, null, 2));
+        console.log('RECENTS', recent);
 
     })
     .catch(error => console.error(error));
 }
+
+document.getElementById('newSong').onclick = function() {
+    console.log('PLAYING NEW SONG!!');
+    newSong()
+};

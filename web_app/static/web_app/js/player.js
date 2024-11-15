@@ -2,6 +2,7 @@ let trackReady = false;
 let device_id;
 let player;
 let accessToken;
+// let tries = parseInt(localStorage.getItem('playCount')) || 0;
 
 window.onSpotifyWebPlaybackSDKReady = () => {
 
@@ -53,7 +54,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     });
 };
 
-const playSixSecondClip = async () => {
+const playClip = async () => {
     try {
         if (!device_id) {
             console.error('Device ID not available');
@@ -73,11 +74,13 @@ const playSixSecondClip = async () => {
             body: JSON.stringify({ uris: [trackUri] })
         });
 
-        // Wait for six seconds, then pause the playback
+        const duration = (parseInt(localStorage.getItem('tries')) + 1) * 1000;
+        console.log(`Playing for ${duration / 1000} seconds`);
+
         setTimeout(async () => {
             await player.pause();
-            console.log('Paused after six seconds');
-        }, 6000); // 6000 milliseconds = 6 seconds
+            console.log(`Paused after ${duration / 1000} seconds`);
+        }, duration); 
     } catch (error) {
         console.error('Error playing the track:', error);
     }
@@ -85,8 +88,38 @@ const playSixSecondClip = async () => {
 
 document.getElementById('play').onclick = function() {
     console.log('PLAYING');
-    playSixSecondClip();
+    playClip();
 };
+
+document.getElementById('addSecond').onclick = function() {
+    console.log('Adding a second!!');
+    let currentValue = parseInt(localStorage.getItem('tries')) || 0;
+    currentValue++;
+    localStorage.setItem('tries', currentValue);
+};
+
+document.getElementById('submit').onclick = function() {
+    submit();
+};
+
+document.getElementById('guess').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();  
+        submit();
+    }
+});
+
+function submit(){
+    if(document.getElementById('guess').value.replace(/\W/g, '').toLowerCase() === localStorage.getItem('songName').replace(/\W/g, '').toLowerCase()){
+        alert("YOU DID IT! I'm so proud of you :)");
+    }else{
+        let currentValue = parseInt(localStorage.getItem('tries')) || 0;
+        currentValue++;
+        localStorage.setItem('tries', currentValue);
+        alert('steal makeup: wrong answer');
+    }
+    document.getElementById('guess').value = '';
+}
 
 async function getAccessToken() {
     try {
