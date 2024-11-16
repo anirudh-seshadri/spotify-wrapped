@@ -116,7 +116,7 @@ function submit(){
         let currentValue = parseInt(localStorage.getItem('tries')) || 0;
         currentValue++;
         localStorage.setItem('tries', currentValue);
-        alert('steal makeup: wrong answer');
+        alert('WRONG :(');
     }
     document.getElementById('guess').value = '';
 }
