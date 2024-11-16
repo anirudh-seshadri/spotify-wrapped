@@ -10,7 +10,7 @@ let trackReady = false;
 let device_id;
 let player;
 let accessToken;
-// let tries = parseInt(localStorage.getItem('playCount')) || 0;
+let tries = 0;
 
 function newSong() {
     switch(startupValue) {
@@ -115,9 +115,9 @@ function fetchTrackDetails(trackID) {
 
         localStorage.setItem('trackUri', selectedTrack.uri);
         localStorage.setItem('songName', selectedTrack.song.split(' - ')[0]);
-        localStorage.setItem('artistName', selectedTrack.song.split(' - ')[1]);
+        localStorage.setItem('artistName', selectedTrack.song.split(' - ')[selectedTrack.song.split(' - ').length - 1]);
         localStorage.setItem('duration', selectedTrack.duration);
-        localStorage.setItem('tries', 0);
+        tries = 0;
 
         // console.log('selectedTrack:', JSON.stringify(selectedTrack, null, 2));
         console.log('RECENTS', recent);
@@ -198,7 +198,7 @@ const playClip = async () => {
             body: JSON.stringify({ uris: [trackUri] })
         });
 
-        const duration = (parseInt(localStorage.getItem('tries')) + 1) * 1000;
+        const duration = (tries + 1) * 1000;
         console.log(`Playing for ${duration / 1000} seconds`);
 
         setTimeout(async () => {
@@ -217,9 +217,7 @@ document.getElementById('play').onclick = function() {
 
 document.getElementById('addSecond').onclick = function() {
     console.log('Adding a second!!');
-    let currentValue = parseInt(localStorage.getItem('tries')) || 0;
-    currentValue++;
-    localStorage.setItem('tries', currentValue);
+    tries++;
 };
 
 document.getElementById('submit').onclick = function() {
@@ -234,12 +232,24 @@ document.getElementById('guess').addEventListener('keydown', function(event) {
 });
 
 function submit(){
-    if(document.getElementById('guess').value.replace(/\W/g, '').toLowerCase() === localStorage.getItem('songName').replace(/\W/g, '').toLowerCase()){
+    let songName = localStorage.getItem('songName');
+    let correctGuess = '';
+    let noPar = '';
+
+    if (songName) {
+        if (/\(.*\)/.test(songName)) {
+            noPar = songName.replace(/\s*\([^()]*\)$/, '').replace(/\W/g, '').toLowerCase();
+        } 
+        correctGuess = songName.replace(/\W/g, '').toLowerCase();
+    }
+
+    if (
+        document.getElementById('guess').value.replace(/\W/g, '').toLowerCase() === correctGuess || 
+        document.getElementById('guess').value.replace(/\W/g, '').toLowerCase() === noPar
+    ) {
         alert("YOU DID IT! I'm so proud of you :)");
     }else{
-        let currentValue = parseInt(localStorage.getItem('tries')) || 0;
-        currentValue++;
-        localStorage.setItem('tries', currentValue);
+        tries++;
         alert('WRONG :(');
     }
     document.getElementById('guess').value = '';
