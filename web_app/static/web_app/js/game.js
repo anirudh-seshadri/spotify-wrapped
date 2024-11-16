@@ -1,6 +1,9 @@
 const startupValue = parseInt(localStorage.getItem('value'));
 const startupID = localStorage.getItem('id');
 
+let songName;
+let artistName;
+
 var selectedTrack = {};
 var recent = [];
 const whileMargin = 50; 
@@ -75,7 +78,7 @@ function getTracks(contentType, query) {
                     selectedTrack = tracks[index];
                     k++;
 
-                } while (lastItems.some(item => item.title === selectedTrack.title) && k < whileMargin);
+                } while (lastItems.some(item => item.title.split(' - ')[0] === selectedTrack.title.split(' - ')[0]) && k < whileMargin);
 
                 if (selectedTrack) {
                     fetchTrackDetails(selectedTrack.uri.split(':')[2]);
@@ -119,6 +122,9 @@ function fetchTrackDetails(trackID) {
         localStorage.setItem('duration', selectedTrack.duration);
         tries = 0;
 
+        songName = localStorage.getItem('songName');
+        artistName = localStorage.getItem('artistName');
+
         // console.log('selectedTrack:', JSON.stringify(selectedTrack, null, 2));
         console.log('RECENTS', recent);
 
@@ -128,7 +134,18 @@ function fetchTrackDetails(trackID) {
 
 document.getElementById('newSong').onclick = function() {
     console.log('PLAYING NEW SONG!!');
+
+    closeNotification();
     newSong()
+};
+
+document.getElementById('skipSong').onclick = function() {
+    console.log('SKIPPING SONG!!');
+    showNotification(`Skipped the song :( The song was ${songName} by ${artistName}. Better luck next time!`);
+
+    const closeButton = document.getElementById('close-btn');
+    closeButton.removeEventListener('click', closeNotification);
+    closeButton.addEventListener('click', closeNotification);
 };
 
 window.onSpotifyWebPlaybackSDKReady = () => {
@@ -217,6 +234,7 @@ document.getElementById('play').onclick = function() {
 
 document.getElementById('addSecond').onclick = function() {
     console.log('Adding a second!!');
+    showShortNotification('SKIPPED! Adding another second...');
     tries++;
 };
 
@@ -232,7 +250,6 @@ document.getElementById('guess').addEventListener('keydown', function(event) {
 });
 
 function submit(){
-    let songName = localStorage.getItem('songName');
     let correctGuess = '';
     let noPar = '';
 
@@ -247,12 +264,51 @@ function submit(){
         document.getElementById('guess').value.replace(/\W/g, '').toLowerCase() === correctGuess || 
         document.getElementById('guess').value.replace(/\W/g, '').toLowerCase() === noPar
     ) {
-        alert("YOU DID IT! I'm so proud of you :)");
+        showNotification(`YOU DID IT! I'm so proud of you :) The song was ${songName} by ${artistName}`);
     }else{
         tries++;
-        alert('WRONG :(');
+        showShortNotification('WRONG :( Adding another second...');
     }
     document.getElementById('guess').value = '';
+}
+
+function showShortNotification(message) {
+    const notification = document.getElementById('notification');
+    const messageElement = document.getElementById('notification-message');
+    messageElement.textContent = message;
+    notification.classList.remove('hidden');
+    
+    const closeButton = document.getElementById('close-btn');
+    const newButton = document.getElementById('newSong');
+    closeButton.style.display = 'none';
+    newButton.style.display = 'none';
+    
+    setTimeout(() => {
+        notification.classList.add('hidden');
+    }, 3000);
+}
+
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    const messageElement = document.getElementById('notification-message');
+    messageElement.textContent = message;
+    notification.classList.remove('hidden');
+    
+    const closeButton = document.getElementById('close-btn');
+    const newButton = document.getElementById('newSong');
+
+    closeButton.style.display = 'inline-block';
+    newButton.style.display = 'inline-block';
+
+    // closeButton.removeEventListener('click', closeNotification);
+    // closeButton.addEventListener('click', () => {
+    //     window.location.href = 'index.html'; 
+    // });
+}
+
+function closeNotification() {
+    const notification = document.getElementById('notification');
+    notification.classList.add('hidden');
 }
 
 async function getAccessToken() {

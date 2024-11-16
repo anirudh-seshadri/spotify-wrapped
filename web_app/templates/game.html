@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped Game</title>
     <link rel="stylesheet" href="{% static 'web_app/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'web_app/css/game.css' %}">
     <script src="https://kit.fontawesome.com/4ce1eac851.js" crossorigin="anonymous"></script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
     {% comment %} <script src="{% static 'web_app/js/player.js' %}" defer></script> {% endcomment %}
@@ -25,14 +26,22 @@
         <h1>AY PLAY A GAME</h1>
     </div>
     <div id="audio-player">
-        <button id="play">Play 6-second preview</button>
+        <button id="play">Play clip</button>
         <button id="addSecond">Add anotha second?</button>
         <audio id="audioPlayer" controls style="display: none;"></audio>
 
         <label for="myTextArea">Enter your guess:</label>
         <button id="submit">Submit guess??</button>
         <textarea id="guess" placeholder="Type your guess here!"></textarea>
-        <button id="newSong">NEW SONG??</button>
+        <button id="skipSong">SKIP SONG??</button>
+
+        <div id="notification" class="notification hidden">
+            <span id="notification-message"></span>
+            <button id="close-btn" class="close-btn" onclick="window.location.href='{% url 'welcome' %}'">Exit</button>
+            <button id="newSong">NEW SONG??</button>
+        </div>
+        
+
     </div>
     {% comment %} <i class="fa-solid fa-play"></i> {% endcomment %}
     <footer>
