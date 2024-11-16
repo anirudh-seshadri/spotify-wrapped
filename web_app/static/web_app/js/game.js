@@ -16,39 +16,51 @@ let accessToken;
 let tries = 0;
 
 function newSong() {
+    trackReady = false;
+    document.getElementById('loading').classList.remove('hidden');
+
     switch(startupValue) {
         case 1: // By Artist (Name)
             console.log("YA PICKED ARTIST BY NAME")
             getTracks('artist', startupID)
-
             break; 
+
         case 2: // By Artist (ID)
             console.log("YA PICKED ARTIST BY ID")
-
-
+            getTracks('artistID', startupID)
             break; 
-        case 3: //By Playlist
-            console.log("YA PICKED PLAYLIST")
+
+        case 3: //By Playlist (Name)
+            console.log("YA PICKED PLAYLIST BY NAME")
             getTracks('playlist', startupID)
-
-
             break; 
-        case 4: //By Album 
-            console.log("YA PICKED ALBUM")
+
+        case 4: //By Playlist (ID)
+            console.log("YA PICKED PLAYLIST BY ID")
+            getTracks('playlistID', startupID)
+            break; 
+
+        case 5: //By Album (name)
+            console.log("YA PICKED ALBUM BY NAME")
             getTracks('album', startupID)
-
             break; 
-        case 5: //Specific song
+
+        case 6: //By Album (ID)
+            console.log("YA PICKED ALBUM BY ID")
+            getTracks('albumID', startupID)
+            break; 
+
+        case 7: //Specific song
             console.log("YA PICKED SONG")
             fetchTrackDetails(startupID);
 
             break; 
-        case 6: //My top 50 songs
+        case 8: //My top 50 songs
             console.log("YA PICKED TOP 50 SONGS")
             getTracks('top50', 'placeholder')
 
             break; 
-        case 7: //My liked songs
+        case 9: //My liked songs
             console.log("YA PICKED LIKED SONGS")
             getTracks('liked', 'placeholder')
 
@@ -60,45 +72,51 @@ function newSong() {
 
 newSong();
 
-function getTracks(contentType, query) {
+async function getTracks(contentType, query) {
     const url = `/get_tracks/${contentType}/${encodeURIComponent(query)}/`;
     console.log('GETTING TRACKS');
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            if (data.tracks) {
-                const tracks = data.tracks;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
 
-                const lastItems = recent.length > probabilityLimit ? recent.slice(-probabilityLimit) : recent;
-                let k = 0;
+        if (data.tracks) {
+            const tracks = data.tracks;
+            console.table(tracks, ["title", "artist", "uri", "duration"]); // Display tracks in a table format
 
-                do {
-                    const index = Math.floor(Math.random() * tracks.length);
-                    selectedTrack = tracks[index];
-                    k++;
+            const lastItems = recent.length > probabilityLimit ? recent.slice(-probabilityLimit) : recent;
+            let k = 0;
 
-                } while (lastItems.some(item => item.title.split(' - ')[0] === selectedTrack.title.split(' - ')[0]) && k < whileMargin);
+            do {
+                const index = Math.floor(Math.random() * tracks.length);
+                selectedTrack = tracks[index];
+                k++;
 
-                if (selectedTrack) {
-                    fetchTrackDetails(selectedTrack.uri.split(':')[2]);
+            } while (lastItems.some(item => item.title.split(' - ')[0] === selectedTrack.title.split(' - ')[0]) && k < whileMargin);
 
-                    // Add the selected track to the recent list
-                    recent.push({
-                        title: selectedTrack.title,
-                        artist: selectedTrack.artist,
-                        trackId: selectedTrack.uri.split(':')[2]
-                    });
-                }else {
-                    console.log("No valid track selected after multiple attempts.");
-                }
-            } else if (data.error) {
-                console.error('Error:', data.error);
+            if (k == whileMargin){
+                console.log('NO MORE UNIQUE SONGS! REPEATING RECENTS')
             }
-        })
-        .catch(error => {
-            console.error('Request failed', error);
-        });
+
+            if (selectedTrack) {
+                fetchTrackDetails(selectedTrack.uri.split(':')[2]);
+
+                // Add the selected track to the recent list
+                recent.push({
+                    title: selectedTrack.title,
+                    artist: selectedTrack.artist,
+                    trackId: selectedTrack.uri.split(':')[2]
+                });
+            }else {
+                console.log("No valid track selected after multiple attempts.");
+            }
+        } else if (data.error) {
+            console.error('Error:', data.error);
+        }
+    }catch(error){
+        console.error('Request failed', error);
+    }
+        
 }
 
 function fetchTrackDetails(trackID) {
@@ -127,6 +145,8 @@ function fetchTrackDetails(trackID) {
 
         // console.log('selectedTrack:', JSON.stringify(selectedTrack, null, 2));
         console.log('RECENTS', recent);
+        trackReady = true;
+        document.getElementById('loading').classList.add('hidden');
 
     })
     .catch(error => console.error(error));
@@ -195,7 +215,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     });
 };
 
-const playClip = async () => {
+async function playClip() {
     try {
         if (!device_id) {
             console.error('Device ID not available');
@@ -215,6 +235,7 @@ const playClip = async () => {
             body: JSON.stringify({ uris: [trackUri] })
         });
 
+
         const duration = (tries + 1) * 1000;
         console.log(`Playing for ${duration / 1000} seconds`);
 
@@ -228,6 +249,10 @@ const playClip = async () => {
 };
 
 document.getElementById('play').onclick = function() {
+    if(!trackReady){
+        console.log('HOLD YOUR FRCKAKSJ HORSES!');
+        return;
+    }
     console.log('PLAYING');
     playClip();
 };
@@ -299,11 +324,6 @@ function showNotification(message) {
 
     closeButton.style.display = 'inline-block';
     newButton.style.display = 'inline-block';
-
-    // closeButton.removeEventListener('click', closeNotification);
-    // closeButton.addEventListener('click', () => {
-    //     window.location.href = 'index.html'; 
-    // });
 }
 
 function closeNotification() {

@@ -172,10 +172,16 @@ def get_tracks(request, content_type, query):
 
     if content_type == 'artist':
         endpoint = f"https://api.spotify.com/v1/search?q=artist:{query}&type=track&limit={limit}"
+    elif content_type == 'artistID':
+        endpoint = f"https://api.spotify.com/v1/artists/{query}/albums?market=US&limit={limit}"
     elif content_type == 'playlist':
         endpoint = f"https://api.spotify.com/v1/search?q=playlist:{query}&type=track&limit={limit}"
+    elif content_type == 'playlistID':
+        endpoint = f"https://api.spotify.com/v1/playlists/{query}/tracks?limit={limit}"
     elif content_type == 'album':
         endpoint = f"https://api.spotify.com/v1/search?q=album:{query}&type=track&limit={limit}"
+    elif content_type == 'albumID':
+        endpoint = f"https://api.spotify.com/v1/albums/{query}/tracks?limit={limit}"
     elif content_type == 'top50':
         endpoint = f"https://api.spotify.com/v1/me/top/tracks?limit={limit}"
     elif content_type == 'liked':
@@ -202,7 +208,34 @@ def get_tracks(request, content_type, query):
                 if not any(existing["title"] == track_item["title"] for existing in track_data):
                     track_data.append(track_item)
 
-        elif content_type == 'top50':
+        elif content_type == 'artistID':
+            albums = data.get('items', [])
+
+            for album in albums:
+                if album.get('album_group') != 'appears_on':
+                    album_id = album.get('id')
+                    tracks_endpoint = f'https://api.spotify.com/v1/albums/{album_id}/tracks'
+                    tracks_response = get(tracks_endpoint, headers=headers)
+
+                    if tracks_response.status_code == 200:
+                        tracks = tracks_response.json().get('items', [])
+                        for track in tracks:
+                            if len(track_data) >= 50: 
+                                break
+                            track_item = {
+                                'title': track.get('name'),
+                                'artist': track['artists'][0].get('name', 'Unknown') if track.get('artists') else 'Unknown',
+                                'uri': track.get('uri'),
+                                'duration': track.get('duration_ms')
+                            }
+
+                            # Avoid adding duplicates
+                            if not any(existing['title'] == track_item['title'] for existing in track_data):
+                                track_data.append(track_item)
+
+                        if len(track_data) >= 50:  
+                            break
+        elif content_type in ['top50', 'albumID']:
             tracks = data.get('items', [])
             for track in tracks:
                 track_item = {
@@ -214,7 +247,7 @@ def get_tracks(request, content_type, query):
                 if not any(existing["title"] == track_item["title"] for existing in track_data):
                     track_data.append(track_item)
 
-        elif content_type == 'liked':
+        elif content_type in ['liked', 'playlistID']:
             tracks = data.get('items', [])
             for track in tracks:
                 track_item = {

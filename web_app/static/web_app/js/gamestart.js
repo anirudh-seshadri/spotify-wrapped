@@ -41,7 +41,7 @@ button.addEventListener("click", async function() {
 
         let isValid = false;
 
-        if (startupValue === 1 || startupValue === 3 || startupValue === 4 || startupValue === 6 || startupValue === 7) {
+        if (startupValue === 1 || startupValue === 3 || startupValue === 5 || startupValue === 8 || startupValue === 9) {
             isValid = true;
         } else if (startupValue > 0 && startupID.length > 0) {
             isValid = await validateSpotifyID(startupID, getTypeForValidation(startupValue));
@@ -62,14 +62,13 @@ button.addEventListener("click", async function() {
 
 function getTypeForValidation(value) {
     switch (value) {
-        case 1: // By Artist (Name)
         case 2: // By Artist (ID)
             return 'artist';
-        case 3: // By Playlist
+        case 4: // By Playlist (ID)
             return 'playlist';
-        case 4: // By Album
+        case 6: // By Album (ID)
             return 'album';
-        case 5: // By Track
+        case 7: // By Track (ID)
             return 'track';
         default:
             return ''; // In case of invalid selection
@@ -91,10 +90,14 @@ select.addEventListener("change", function() {
         } else if(select.value == 2) {
             textarea.placeholder = "Enter artist by id"; 
         } else if(select.value == 3) {
-            textarea.placeholder = "Enter the playlist id";
+            textarea.placeholder = "Enter the playlist name";
         } else if(select.value == 4) {
-            textarea.placeholder = "Enter the album id";
+            textarea.placeholder = "Enter the playlist id";
         } else if(select.value == 5) {
+            textarea.placeholder = "Enter the album name";
+        } else if(select.value == 6) {
+            textarea.placeholder = "Enter the album id";
+        } else if(select.value == 7) {
             textarea.placeholder = "Enter the track id";
         } else {
             textarea.placeholder = "";
