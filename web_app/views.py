@@ -199,6 +199,8 @@ def get_tracks(request, content_type, query):
         if content_type in ['artist', 'playlist', 'album']:
             tracks = data.get('tracks', {}).get('items', [])
             for track in tracks:
+                if track.get("uri").split(':')[1] != 'track':
+                    continue
                 track_item = {
                     "title": track.get("name"),
                     "artist": track["artists"][0]["name"] if track.get("artists") else "Unknown",
@@ -222,6 +224,8 @@ def get_tracks(request, content_type, query):
                         for track in tracks:
                             if len(track_data) >= 50: 
                                 break
+                            if track.get("uri").split(':')[1] != 'track':
+                                continue
                             track_item = {
                                 'title': track.get('name'),
                                 'artist': track['artists'][0].get('name', 'Unknown') if track.get('artists') else 'Unknown',
@@ -238,6 +242,8 @@ def get_tracks(request, content_type, query):
         elif content_type in ['top50', 'albumID']:
             tracks = data.get('items', [])
             for track in tracks:
+                if track.get("uri").split(':')[1] != 'track':
+                    continue
                 track_item = {
                     "title": track.get("name"),
                     "artist": track["artists"][0]["name"] if track.get("artists") else "Unknown",
@@ -250,6 +256,8 @@ def get_tracks(request, content_type, query):
         elif content_type in ['liked', 'playlistID']:
             tracks = data.get('items', [])
             for track in tracks:
+                if track['track'].get("uri").split(':')[1] != 'track':
+                    continue
                 track_item = {
                     "title": track['track'].get("name"),
                     "artist": track['track']["artists"][0]["name"] if track['track'].get("artists") else "Unknown",
