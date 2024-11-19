@@ -7,6 +7,7 @@ from django.conf import settings
 import base64
 import json
 from requests import post, get
+import re
 
 SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
@@ -199,7 +200,9 @@ def get_tracks(request, content_type, query):
         if content_type in ['artist', 'playlist', 'album']:
             tracks = data.get('tracks', {}).get('items', [])
             for track in tracks:
-                if track.get("uri").split(':')[1] != 'track':
+                cleanTitle = track.get("name", "").replace(" ", "")
+                cleanTitle = re.sub(r"[^\w&]", "", cleanTitle)
+                if track.get("uri").split(':')[1] != 'track' or not cleanTitle:
                     continue
                 track_item = {
                     "title": track.get("name"),
@@ -224,7 +227,9 @@ def get_tracks(request, content_type, query):
                         for track in tracks:
                             if len(track_data) >= 50: 
                                 break
-                            if track.get("uri").split(':')[1] != 'track':
+                            cleanTitle = track.get("name", "").replace(" ", "")
+                            cleanTitle = re.sub(r"[^\w&]", "", cleanTitle)
+                            if track.get("uri").split(':')[1] != 'track' or not cleanTitle:
                                 continue
                             track_item = {
                                 'title': track.get('name'),
@@ -242,7 +247,9 @@ def get_tracks(request, content_type, query):
         elif content_type in ['top50', 'albumID']:
             tracks = data.get('items', [])
             for track in tracks:
-                if track.get("uri").split(':')[1] != 'track':
+                cleanTitle = track.get("name", "").replace(" ", "")
+                cleanTitle = re.sub(r"[^\w&]", "", cleanTitle)
+                if track.get("uri").split(':')[1] != 'track' or not cleanTitle:
                     continue
                 track_item = {
                     "title": track.get("name"),
@@ -256,7 +263,9 @@ def get_tracks(request, content_type, query):
         elif content_type in ['liked', 'playlistID']:
             tracks = data.get('items', [])
             for track in tracks:
-                if track['track'].get("uri").split(':')[1] != 'track':
+                cleanTitle = track['track'].get("name", "").replace(" ", "")
+                cleanTitle = re.sub(r"[^\w&]", "", cleanTitle)
+                if track['track'].get("uri").split(':')[1] != 'track' or not cleanTitle:
                     continue
                 track_item = {
                     "title": track['track'].get("name"),

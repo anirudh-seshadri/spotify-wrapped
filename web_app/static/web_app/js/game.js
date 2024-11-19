@@ -160,6 +160,10 @@ document.getElementById('newSong').onclick = function() {
 };
 
 document.getElementById('skipSong').onclick = function() {
+    if(!trackReady){
+        console.log("YOU DIDN'T LISTEN TO THE SONG YET!!");
+        return;
+    }
     console.log('SKIPPING SONG!!');
     showNotification(`Skipped the song :( The song was ${songName} by ${artistName}. Better luck next time!`);
 
@@ -280,14 +284,15 @@ function submit(){
 
     if (songName) {
         if (/\(.*\)/.test(songName)) {
-            noPar = songName.replace(/\s*\([^()]*\)$/, '').replace(/\W/g, '').toLowerCase();
+            noPar = songName.replace(/\s*\([^()]*\)$/, '').replace(/[^\w&]/g, '').toLowerCase();
         } 
-        correctGuess = songName.replace(/\W/g, '').toLowerCase();
+        correctGuess = songName.replace(/[^\w&]/g, '').toLowerCase();
     }
-
-    if (
-        document.getElementById('guess').value.replace(/\W/g, '').toLowerCase() === correctGuess || 
-        document.getElementById('guess').value.replace(/\W/g, '').toLowerCase() === noPar
+    if (document.getElementById('guess').value === ''){
+        showShortNotification('You have to type a guess!!');
+    }else if (
+        document.getElementById('guess').value.replace(/[^\w&]/g, '').toLowerCase() === correctGuess || 
+        document.getElementById('guess').value.replace(/[^\w&]/g, '').toLowerCase() === noPar
     ) {
         showNotification(`YOU DID IT! I'm so proud of you :) The song was ${songName} by ${artistName}`);
     }else{
