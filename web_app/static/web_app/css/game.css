@@ -1,3 +1,47 @@
 .hidden {
     display: none;
 }
+
+body {
+    /* background: var(--dark-color);
+    color: var(--light-color); */
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+}
+h1 {
+    font-size: 40px;
+    margin: 0 auto;
+}
+
+h1, #streak, #buttons div, #playAgain, #play p {
+    cursor: default;
+}
+
+#title-div {
+    display: flex;
+    position: relative;
+}
+
+#title-div div {
+    padding: 10px;
+    text-transform: uppercase;
+    border-radius: 5px;
+    font-weight: bolder;
+    position: absolute;
+}
+
+#skipSong, #close-btn {
+    cursor: pointer;
+}
+
+#skipSong {
+    background-color: rgb(137, 12, 12);
+    left: 0;
+}
+
+#close-btn {
+    background-color: white;
+    right: 0;
+}
+
+/* TOP AND GUESS SECTION!! */

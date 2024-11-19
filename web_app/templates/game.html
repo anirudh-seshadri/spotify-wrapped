@@ -22,34 +22,82 @@
             <a href="#">Profile</a>
         </nav>
     </header>
-    <div class="welcome-container">
-        <h1>AY PLAY A GAME</h1>
-    </div>
-    <div id="audio-player">
-        <button id="play">Play clip</button>
-        <button id="addSecond">Add anotha second?</button>
-        <audio id="audioPlayer" controls style="display: none;"></audio>
-
-        <label for="myTextArea">Enter your guess:</label>
-        <button id="submit">Submit guess??</button>
-        <textarea id="guess" placeholder="Type your guess here!"></textarea>
-        <button id="skipSong">SKIP SONG??</button>
-
-        <div id="short-notification" class="notification hidden">
-            <span id="short-notification-message"></span>
+    <section id="top">
+        <div id="title-div">
+            <button id="skipSong">GIVE UP</button>
+            <h1>Spotify Heardle!</h1>
+            <button id="close-btn" class="close-btn" onclick="window.location.href='{% url 'gameintro' %}'">BACK TO MENU</button>
         </div>
-        
+        <div id="guesses">
+            <div>
+                <i class=""></i>
+                <p>Test - test</p>
+            </div>
+            <div>
+                <i class=""></i>
+                <p>Test - test</p>
+            </div>
+            <div>
+                <i class=""></i>
+                <p>Test - test</p>
+            </div>
+            <div>
+                <i class=""></i>
+                <p>Test - test</p>
+            </div>
+            <div>
+                <i class=""></i>
+                <p>Test - test</p>
+            </div>
+            <div>
+                <i class=""></i>
+                <p>Test - test</p>
+            </div>
+        </div>
+    </section>
+    <section id="reveal">
         <div id="reg-notification" class="notification hidden">
             <span id="reg-notification-message"></span>
             <button id="close-btn" class="close-btn" onclick="window.location.href='{% url 'welcome' %}'">Exit</button>
             <button id="newSong">NEW SONG??</button>
         </div>
-
+        <div id="short-notification" class="notification hidden">
+            <span id="short-notification-message"></span>
+        </div>
         <div id="loading" class="loading hidden">Fetching song...</div>
-        
-
-    </div>
-    {% comment %} <i class="fa-solid fa-play"></i> {% endcomment %}
+    </section>
+    <section id="bottom">
+        <div id="time">
+            <div id="time-parts">
+                <div id="currentTime"></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <div id="audio-player">
+            <p>0:00</p>
+            <button id="play"><i class="fa-solid fa-play"></i></button>
+            <audio id="audioPlayer" controls style="display: none;"></audio>
+            <p>0:16</p>
+        </div>
+        <div id="textfield">
+            <div id="alternatives">
+                <div>
+                </div>
+            </div>
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <textarea id="guess" placeholder="Enter an artist or a song!"></textarea>
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <div id="buttons">
+            <button id="addSecond">SKIP? (+1s)</button>
+            <button id="submit">SUBMIT??</button>
+        </div>
+    </section>
     <footer>
         <p>© 2024 Your Project</p>
     </footer>
