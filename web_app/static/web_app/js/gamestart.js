@@ -41,9 +41,25 @@ button.addEventListener("click", async function() {
 
         let isValid = false;
 
-        if (startupValue === 1 || startupValue === 3 || startupValue === 5 || startupValue === 8 || startupValue === 9) {
+        if (startupValue === 8 || startupValue === 9) {
             isValid = true;
-        } else if (startupValue > 0 && startupID.length > 0) {
+        } else if (startupValue === 1 || startupValue === 3 || startupValue === 5){
+            const url = `/get_tracks/${getSearchType(startupValue)}/${encodeURIComponent(startupID)}/`;
+            console.log('CHECKING TRACKS');
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+        
+                if (data.tracks.length == 0) {
+                    showShortNotification("No valid songs found!! Please enter a different search.");
+                    return;
+                }else{
+                    isValid = true;
+                }
+            }catch(error){
+                console.error('Request failed', error);
+            } 
+        }else if(startupValue > 0 && startupID.length > 0) {
             isValid = await validateSpotifyID(startupID, getTypeForValidation(startupValue));
         }
 
@@ -55,10 +71,23 @@ button.addEventListener("click", async function() {
             
             window.location.href = "/game/";
         } else {
-            alert("WRONG ID YA SUCK!");
+            showShortNotification("Invalid ID!! Please enter a different one.")
         }
     }
 });
+
+function getSearchType(value) {
+    switch (value) {
+        case 1: // By Artist (ID)
+            return 'artist';
+        case 3: // By Playlist (ID)
+            return 'playlist';
+        case 5: // By Album (ID)
+            return 'album';
+        default:
+            return ''; // In case of invalid selection
+    }
+}
 
 function getTypeForValidation(value) {
     switch (value) {
@@ -105,6 +134,19 @@ select.addEventListener("change", function() {
         }
     }
 })
+
+function showShortNotification(message) {
+    console.log("SHOWING SHORT NOTIFICATION")
+    const shortNotification = document.getElementById('short-notification');
+    const messageElement = document.getElementById('short-notification-message');
+    messageElement.textContent = message;
+    shortNotification.classList.remove('hidden');
+
+    setTimeout(() => {
+        shortNotification.classList.add('hidden');
+        console.log("CLOSING SHORT NOTIFICATION")
+    }, 3000);
+}
 
 textarea.addEventListener('keydown', function(e) {
     if(e.key == "Enter") {

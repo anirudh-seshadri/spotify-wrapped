@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped Game</title>
     <link rel="stylesheet" href="{% static 'web_app/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'web_app/css/game.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% comment %} <script src="{% static 'web_app/js/game.js' %}" defer></script> {% endcomment %}
     <script src="{% static 'web_app/js/gamestart.js' %}" defer></script>
 </head>
 <body>
@@ -42,9 +44,11 @@
             </div>
             <button id="button">Done</button>
         </div>
+        <div id="short-notification" class="notification hidden">
+            <span id="short-notification-message"></span>
+        </div>
     </main>
 
-    </div>
     <pre id="result" style="margin-top: 20px;"></pre>
     <footer>
         <p>© 2024 Your Project</p>
