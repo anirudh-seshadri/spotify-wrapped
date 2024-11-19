@@ -303,26 +303,28 @@ function submit(){
 }
 
 function showShortNotification(message) {
-    const notification = document.getElementById('notification');
-    const messageElement = document.getElementById('notification-message');
+    const regNotification = document.getElementById('reg-notification');
+    if (regNotification && !regNotification.classList.contains('hidden')) {
+        return; // Prevent showing short notification if regular is active
+    }
+    console.log("SHOWING SHORT NOTIFICATION")
+    const shortNotification = document.getElementById('short-notification');
+    const messageElement = document.getElementById('short-notification-message');
     messageElement.textContent = message;
-    notification.classList.remove('hidden');
-    
-    const closeButton = document.getElementById('close-btn');
-    const newButton = document.getElementById('newSong');
-    closeButton.style.display = 'none';
-    newButton.style.display = 'none';
-    
+    shortNotification.classList.remove('hidden');
+
     setTimeout(() => {
-        notification.classList.add('hidden');
+        shortNotification.classList.add('hidden');
+        console.log("CLOSING SHORT NOTIFICATION")
     }, 3000);
 }
 
 function showNotification(message) {
-    const notification = document.getElementById('notification');
-    const messageElement = document.getElementById('notification-message');
+    console.log('SHOWING REGULAR NOTIFICATION')
+    const regularNotification = document.getElementById('reg-notification');
+    const messageElement = document.getElementById('reg-notification-message');
     messageElement.textContent = message;
-    notification.classList.remove('hidden');
+    regularNotification.classList.remove('hidden');
     
     const closeButton = document.getElementById('close-btn');
     const newButton = document.getElementById('newSong');
@@ -332,7 +334,7 @@ function showNotification(message) {
 }
 
 function closeNotification() {
-    const notification = document.getElementById('notification');
+    const notification = document.getElementById('reg-notification');
     notification.classList.add('hidden');
 }
 

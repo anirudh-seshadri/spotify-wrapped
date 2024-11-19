@@ -35,8 +35,12 @@
         <textarea id="guess" placeholder="Type your guess here!"></textarea>
         <button id="skipSong">SKIP SONG??</button>
 
-        <div id="notification" class="notification hidden">
-            <span id="notification-message"></span>
+        <div id="short-notification" class="notification hidden">
+            <span id="short-notification-message"></span>
+        </div>
+        
+        <div id="reg-notification" class="notification hidden">
+            <span id="reg-notification-message"></span>
             <button id="close-btn" class="close-btn" onclick="window.location.href='{% url 'welcome' %}'">Exit</button>
             <button id="newSong">NEW SONG??</button>
         </div>
