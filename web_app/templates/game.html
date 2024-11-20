@@ -58,8 +58,10 @@
     <section id="reveal">
         <div id="reg-notification" class="notification hidden">
             <span id="reg-notification-message"></span>
-            <button id="close-btn" class="close-btn" onclick="window.location.href='{% url 'welcome' %}'">Exit</button>
-            <button id="newSong">NEW SONG??</button>
+            <div class="buttons">
+                <button id="close-btn" class="close-btn" onclick="window.location.href='{% url 'welcome' %}'">Exit</button>
+                <button id="newSong">NEW SONG??</button>
+            </div>
         </div>
         <div id="short-notification" class="notification hidden">
             <span id="short-notification-message"></span>
@@ -93,13 +95,13 @@
             <textarea id="guess" placeholder="Enter an artist or a song!"></textarea>
             <i class="fa-solid fa-xmark"></i>
         </div>
-        <div id="buttons">
+        <div class="buttons">
             <button id="addSecond">SKIP? (+1s)</button>
             <button id="submit">SUBMIT??</button>
         </div>
+        <footer>
+            <p>© 2024 Your Project</p>
+        </footer>
     </section>
-    <footer>
-        <p>© 2024 Your Project</p>
-    </footer>
 </body>
 </html>
