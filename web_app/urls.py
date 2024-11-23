@@ -8,4 +8,5 @@ urlpatterns = [
     path('login/form/', views.login_form, name='login_form'),
     path('signup/form/', views.signup_form, name='signup_form'),
     path('pastwraps/', views.pastwraps, name='pastwraps'), 
+    path('profile/', views.profile, name='profile'),
 ]

@@ -96,8 +96,8 @@ body.light-mode {
 /* Theme toggle button */
 .theme-toggle {
     position: fixed;
-    top: 1.4rem;
-    right: 11rem;
+    top: 0.8rem;
+    right: 8rem;
     background: transparent;
     border: none;
     cursor: pointer;

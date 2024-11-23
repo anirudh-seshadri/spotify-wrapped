@@ -106,3 +106,7 @@ def signup_form(request):
 
 def pastwraps(request):
     return render(request, 'pastwraps.html')
+
+def profile(request):
+    # Add login_required decorator if you want to restrict access to logged-in users only
+    return render(request, 'profile.html')
