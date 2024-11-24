@@ -58,9 +58,9 @@
     <section id="reveal">
         <div id="reg-notification" class="notification hidden">
             <span id="reg-notification-message"></span>
-            <div class="buttons">
-                <button id="close-btn" class="close-btn" onclick="window.location.href='{% url 'welcome' %}'">Exit</button>
-                <button id="newSong">NEW SONG??</button>
+            <div class="notifButtons">
+                <button id="close-btn" class="close-btn" onclick="window.location.href='{% url 'welcome' %}'">EXIT</button>
+                <button id="newSong">PLAY AGAIN?</button>
             </div>
         </div>
         <div id="short-notification" class="notification hidden">
@@ -81,10 +81,14 @@
             </div>
         </div>
         <div id="audio-player">
-            <p>0:00</p>
+            <p style="
+            margin-left: 25px;
+            ">0:00</p>
             <button id="play"><i class="fa-solid fa-play"></i></button>
             <audio id="audioPlayer" controls style="display: none;"></audio>
-            <p>0:16</p>
+            <p style="
+            margin-right: 25px;
+            ">0:16</p>
         </div>
         <div id="textfield">
             <div id="alternatives">
@@ -97,7 +101,7 @@
         </div>
         <div class="buttons">
             <button id="addSecond">SKIP? (+1s)</button>
-            <button id="submit">SUBMIT??</button>
+            <button id="submit">SUBMIT</button>
         </div>
         <footer>
             <p>© 2024 Your Project</p>

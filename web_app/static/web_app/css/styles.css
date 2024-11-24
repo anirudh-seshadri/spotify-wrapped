@@ -13,6 +13,9 @@ header {
     padding: 1rem;
     background-color: #f2f;
     color: white;
+    position: fixed;
+    width: 100%;
+    top: 0;
 }
 
 nav a {
@@ -50,4 +53,5 @@ footer {
     padding: 2rem;
     background-color: #333;
     color: white;
+    margin-top: 2%;
 }

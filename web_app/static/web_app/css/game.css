@@ -14,7 +14,7 @@ body {
     /* background: var(--dark-color);
     color: var(--light-color); */
     text-align: center;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Arial', sans-serif;
 }
 h1 {
     font-size: 40px;
@@ -54,7 +54,7 @@ h1, #streak, .buttons div, #playAgain, #play p {
 
 /* TOP AND GUESS SECTION!! */
 #top {
-    padding-top: 20px;
+    padding-top: 5.5%;
     width: 700px;
     height: auto;
     position: fixed;
@@ -102,10 +102,13 @@ h1, #streak, .buttons div, #playAgain, #play p {
 /*----------------------------------------------------------------------------------*/
 
 #reveal {
-    height: 0;
     margin: 0 auto; 
-    width: auto;
-    padding-top: 60px;
+    padding-top: 20px;
+    width: 630px;
+    margin-top: 430px;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0);
 }
 
 #song {
@@ -141,6 +144,16 @@ h1, #streak, .buttons div, #playAgain, #play p {
     margin-top: -10px;
 }
 
+.notifButtons {
+    display: flex;
+    position: relative;
+    margin: auto;
+    height: 30px;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
 /*----------------------------------------------------------------------------------*/
 
 #bottom {
@@ -151,7 +164,6 @@ h1, #streak, .buttons div, #playAgain, #play p {
     left: 0%;
     margin: auto;
     text-align: center;
-    padding-bottom: 20px;
 }
 
 #bottom div {
@@ -160,7 +172,7 @@ h1, #streak, .buttons div, #playAgain, #play p {
 
 #time {
     height: 15px;
-    width: 100%;
+    /* width: 100%; */
     border: var(--gray-color) 1px solid;
     margin-left: -1px;
 }
@@ -211,7 +223,9 @@ h1, #streak, .buttons div, #playAgain, #play p {
     margin: auto;
     width: 700px;
     position: relative;
-    height: 100px;
+    height: 85px;
+    background: none;
+    border: none;
 }
 #play i, #play p {
     position: absolute;
@@ -227,6 +241,7 @@ h1, #streak, .buttons div, #playAgain, #play p {
     font-size: 20px;
     height: 20px;
     width: 20px;
+    color: white;
 }
 #play p {
     transform: translate(0, -100%);
@@ -303,9 +318,11 @@ div:has(+ .chosenAlternative) {
 
 .buttons {
     position: relative;
-    width: 700px;
+    width: 100%;
     margin: auto;
     height: 50px;
+    justify-content: center;
+    gap: 20px;
 }
 .buttons div {
     padding: 10px;
