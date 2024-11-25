@@ -24,7 +24,7 @@ const meter = document.getElementById('currentTime');
 
 const addSecondButton = document.getElementById('addSecond');
 
-setInterval(() => updateMeter(duration), 6);
+setInterval(() => updateMeter(duration), 8);
 
 function newSong() {
     trackReady = false;
