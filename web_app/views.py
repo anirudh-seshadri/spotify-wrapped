@@ -317,7 +317,7 @@ def game(request):
     print('Access Token: ', access_token)
 
     if not access_token:
-        return redirect('welcome')
+        return redirect('spotify_login')
     return render(request, 'game.html')
 
 def game_intro(request):

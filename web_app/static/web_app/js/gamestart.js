@@ -39,6 +39,11 @@ button.addEventListener("click", async function() {
         startupValue = parseInt(select.value); 
         startupID = textarea.value; 
 
+        if(startupValue == 0){
+            showShortNotification("You have to pick a preference!")
+            return;
+        }
+
         let isValid = false;
 
         if (startupValue === 8 || startupValue === 9) {
@@ -51,13 +56,15 @@ button.addEventListener("click", async function() {
                 const data = await response.json();
         
                 if (data.tracks.length == 0) {
-                    showShortNotification("No valid songs found!! Please enter a different search.");
+                    showShortNotification("No valid songs found! Please enter a different search.");
                     return;
                 }else{
                     isValid = true;
                 }
             }catch(error){
                 console.error('Request failed', error);
+                window.location.href = "/game/";
+                return;
             } 
         }else if(startupValue > 0 && startupID.length > 0) {
             isValid = await validateSpotifyID(startupID, getTypeForValidation(startupValue));
@@ -71,7 +78,7 @@ button.addEventListener("click", async function() {
             
             window.location.href = "/game/";
         } else {
-            showShortNotification("Invalid ID!! Please enter a different one.")
+            showShortNotification("Invalid ID! Please enter a different one.")
         }
     }
 });
