@@ -24,7 +24,7 @@ const meter = document.getElementById('currentTime');
 
 const addSecondButton = document.getElementById('addSecond');
 
-setInterval(() => updateMeter(duration), 10);
+setInterval(() => updateMeter(duration), 6);
 
 function newSong() {
     trackReady = false;
@@ -276,7 +276,6 @@ document.getElementById('play').onclick = function() {
     if(!trackReady){
         return;
     }
-    console.log('PLAYING');
     const play = this;
     play.innerHTML = '<span class="icon"><i class="fa-solid fa-music"></i></span>'
     playClip();
