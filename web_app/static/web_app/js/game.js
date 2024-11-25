@@ -18,6 +18,7 @@ let isPlaying = false;
 let time = 0;
 let duration = 1000;
 let styleElements = [];
+let finished = false;
 const sequence = [1, 2, 4, 7, 11, 16, 22]
 const widthSequence = [6.25, 12.5, 25, 43.75, 68.75, 100]
 const meter = document.getElementById('currentTime');
@@ -31,6 +32,7 @@ function newSong() {
     document.getElementById('loading').classList.remove('hidden');
     duration = 1000;
     meter.style.width = "0%";
+    finished = false;
     removeAllTimeParts();
     clearGuessDivs();
 
@@ -176,12 +178,15 @@ document.getElementById('newSong').onclick = function() {
 };
 
 document.getElementById('skipSong').onclick = function() {
-    if(!trackReady){
+    if(finished || !trackReady){
         console.log("YOU DIDN'T LISTEN TO THE SONG YET!!");
         return;
     }
     console.log('SKIPPING SONG!!');
+    fillMeter();
     showNotification(`Skipped the song! The song was ${songName} by ${artistName}. Better luck next time!`);
+    finished = true;
+
 
     const closeButton = document.getElementById('close-btn');
     closeButton.removeEventListener('click', closeNotification);
@@ -283,11 +288,16 @@ document.getElementById('play').onclick = function() {
 };
 
 document.getElementById('addSecond').onclick = function() {
+    if(finished){
+        return;
+    }
     console.log('Adding a second!!');
     if(tries == 0){
         showShortNotification('SKIPPED! Adding 1 second...');
     }else if(tries == 5){
         showNotification(`Ran out of tries! The song was ${songName} by ${artistName}. Better luck next time!`);
+        finished = true;
+        updateGuessDiv('', false);
         return;
     }else{
         showShortNotification(`SKIPPED! Adding ${tries + 1} seconds...`)
@@ -299,11 +309,7 @@ document.getElementById('addSecond').onclick = function() {
 };
 
 document.getElementById('submit').onclick = function() {
-    if(tries == 5){
-        return;
-    }else{
-        submit();
-    }
+    submit();
 };
 
 document.getElementById('guess').addEventListener('keydown', function(event) {
@@ -314,6 +320,9 @@ document.getElementById('guess').addEventListener('keydown', function(event) {
 });
 
 function submit(){
+    if(finished){
+        return;
+    }
     let correctGuess = '';
     let noPar = '';
 
@@ -332,11 +341,14 @@ function submit(){
         userGuess.replace(/[^\w&]/g, '').toLowerCase() === noPar
     ) {
         updateGuessDiv(userGuess, true);
+        fillMeter();
         showNotification(`YOU GOT IT! The song was ${songName} by ${artistName}.`);
+        finished = true;
     }else{
         updateGuessDiv(userGuess, false);
         if(tries == 5){
             showNotification(`Ran out of tries! The song was ${songName} by ${artistName}. Better luck next time!`);
+            finished = true;
         }else {
             tries++;
             showShortNotification('WRONG! Adding another second...');
@@ -456,6 +468,14 @@ function removeAllTimeParts() {
     });
     styleElements = []; 
     console.log('REMOVED ALL TIME PARTS');
+}
+
+function fillMeter() {
+    while(tries < 5){
+        addTimePart();
+        tries++;
+    }
+    addTimePart();
 }
 
 async function getAccessToken() {
