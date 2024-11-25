@@ -32,6 +32,7 @@ function newSong() {
     duration = 1000;
     meter.style.width = "0%";
     removeAllTimeParts();
+    clearGuessDivs();
 
     switch(startupValue) {
         case 1: // By Artist (Name)
@@ -291,13 +292,18 @@ document.getElementById('addSecond').onclick = function() {
     }else{
         showShortNotification(`SKIPPED! Adding ${tries + 1} seconds...`)
     }
+    updateGuessDiv('', false);
     tries++;
     updateButtonText();
     addTimePart();
 };
 
 document.getElementById('submit').onclick = function() {
-    submit();
+    if(tries == 5){
+        return;
+    }else{
+        submit();
+    }
 };
 
 document.getElementById('guess').addEventListener('keydown', function(event) {
@@ -311,20 +317,24 @@ function submit(){
     let correctGuess = '';
     let noPar = '';
 
+    const userGuess = document.getElementById('guess').value.trim();
+
     if (songName) {
         if (/\(.*\)/.test(songName)) {
             noPar = songName.replace(/\s*\([^()]*\)$/, '').replace(/[^\w&]/g, '').toLowerCase();
         } 
         correctGuess = songName.replace(/[^\w&]/g, '').toLowerCase();
     }
-    if (document.getElementById('guess').value === ''){
+    if (userGuess === ''){
         showShortNotification('You have to type a guess!!');
     }else if (
-        document.getElementById('guess').value.replace(/[^\w&]/g, '').toLowerCase() === correctGuess || 
-        document.getElementById('guess').value.replace(/[^\w&]/g, '').toLowerCase() === noPar
+        userGuess.replace(/[^\w&]/g, '').toLowerCase() === correctGuess || 
+        userGuess.replace(/[^\w&]/g, '').toLowerCase() === noPar
     ) {
+        updateGuessDiv(userGuess, true);
         showNotification(`YOU GOT IT! The song was ${songName} by ${artistName}.`);
     }else{
+        updateGuessDiv(userGuess, false);
         if(tries == 5){
             showNotification(`Ran out of tries! The song was ${songName} by ${artistName}. Better luck next time!`);
         }else {
@@ -391,6 +401,40 @@ function updateMeter(duration) {
         }
     }
 }
+
+function updateGuessDiv(userGuess, isCorrect) {
+    const guessDivs = document.querySelectorAll("#guesses div");
+    const currentDiv = guessDivs[tries];
+    const icon = currentDiv.querySelector("i");
+    const guessText = currentDiv.querySelector("p");
+
+    guessText.textContent = userGuess;
+    guessText.style.visibility = "visible";
+    if(userGuess == ''){
+        icon.className = "fa-solid fa-minus";
+    }else if(isCorrect){
+        icon.className = "fa-solid fa-check"; 
+    }else {
+        icon.className = "fa-solid fa-xmark"; 
+    }
+    icon.style.visibility = "visible";
+}
+
+function clearGuessDivs() {
+    const guessDivs = document.querySelectorAll("#guesses div");
+
+    guessDivs.forEach((div) => {
+        const icon = div.querySelector("i");
+        const guessText = div.querySelector("p");
+
+        guessText.textContent = "Test - test";
+        guessText.style.visibility = "hidden";
+
+        icon.className = ""; 
+        icon.style.visibility = "hidden";
+    });
+}
+
 
 function addTimePart() {
     const style = document.createElement('style');
