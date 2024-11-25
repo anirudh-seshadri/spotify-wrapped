@@ -14,10 +14,24 @@ let device_id;
 let player;
 let accessToken;
 let tries = 0;
+let isPlaying = false;
+let time = 0;
+let duration = 1000;
+let styleElements = [];
+const sequence = [1, 2, 4, 7, 11, 16, 22]
+const widthSequence = [6.25, 12.5, 25, 43.75, 68.75, 100]
+const meter = document.getElementById('currentTime');
+
+const addSecondButton = document.getElementById('addSecond');
+
+setInterval(() => updateMeter(duration), 10);
 
 function newSong() {
     trackReady = false;
     document.getElementById('loading').classList.remove('hidden');
+    duration = 1000;
+    meter.style.width = "0%";
+    removeAllTimeParts();
 
     switch(startupValue) {
         case 1: // By Artist (Name)
@@ -139,6 +153,7 @@ function fetchTrackDetails(trackID) {
         localStorage.setItem('artistName', selectedTrack.song.split(' - ')[selectedTrack.song.split(' - ').length - 1]);
         localStorage.setItem('duration', selectedTrack.duration);
         tries = 0;
+        updateButtonText();
 
         songName = localStorage.getItem('songName');
         artistName = localStorage.getItem('artistName');
@@ -165,7 +180,7 @@ document.getElementById('skipSong').onclick = function() {
         return;
     }
     console.log('SKIPPING SONG!!');
-    showNotification(`Skipped the song :( The song was ${songName} by ${artistName}. Better luck next time!`);
+    showNotification(`Skipped the song! The song was ${songName} by ${artistName}. Better luck next time!`);
 
     const closeButton = document.getElementById('close-btn');
     closeButton.removeEventListener('click', closeNotification);
@@ -227,7 +242,6 @@ async function playClip() {
         }
 
         const trackUri = localStorage.getItem('trackUri');
-        console.log('trackURi: ' + trackUri);
 
         // Start playback at the beginning of the track
         await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
@@ -239,13 +253,19 @@ async function playClip() {
             body: JSON.stringify({ uris: [trackUri] })
         });
 
-
-        const duration = (tries + 1) * 1000;
+        time = 0;
+        duration = (sequence[tries]) * 1000;
         console.log(`Playing for ${duration / 1000} seconds`);
+        isPlaying = true;
 
         setTimeout(async () => {
             await player.pause();
             console.log(`Paused after ${duration / 1000} seconds`);
+            play = document.getElementById('play');
+            play.innerHTML = '<span class="icon"><i class="fa-solid fa-play"></i></span>'
+            isPlaying = false;
+            meter.style.width = `${widthSequence[tries]}%`;
+
         }, duration); 
     } catch (error) {
         console.error('Error playing the track:', error);
@@ -254,17 +274,27 @@ async function playClip() {
 
 document.getElementById('play').onclick = function() {
     if(!trackReady){
-        console.log('HOLD YOUR FRCKAKSJ HORSES!');
         return;
     }
     console.log('PLAYING');
+    const play = this;
+    play.innerHTML = '<span class="icon"><i class="fa-solid fa-music"></i></span>'
     playClip();
 };
 
 document.getElementById('addSecond').onclick = function() {
     console.log('Adding a second!!');
-    showShortNotification('SKIPPED! Adding another second...');
+    if(tries == 0){
+        showShortNotification('SKIPPED! Adding 1 second...');
+    }else if(tries == 5){
+        showNotification(`Ran out of tries! The song was ${songName} by ${artistName}. Better luck next time!`);
+        return;
+    }else{
+        showShortNotification(`SKIPPED! Adding ${tries + 1} seconds...`)
+    }
     tries++;
+    updateButtonText();
+    addTimePart();
 };
 
 document.getElementById('submit').onclick = function() {
@@ -294,10 +324,16 @@ function submit(){
         document.getElementById('guess').value.replace(/[^\w&]/g, '').toLowerCase() === correctGuess || 
         document.getElementById('guess').value.replace(/[^\w&]/g, '').toLowerCase() === noPar
     ) {
-        showNotification(`YOU DID IT! I'm so proud of you :) The song was ${songName} by ${artistName}`);
+        showNotification(`YOU GOT IT! The song was ${songName} by ${artistName}.`);
     }else{
-        tries++;
-        showShortNotification('WRONG :( Adding another second...');
+        if(tries == 5){
+            showNotification(`Ran out of tries! The song was ${songName} by ${artistName}. Better luck next time!`);
+        }else {
+            tries++;
+            showShortNotification('WRONG! Adding another second...');
+            updateButtonText();
+            addTimePart();
+        }
     }
     document.getElementById('guess').value = '';
 }
@@ -336,6 +372,47 @@ function showNotification(message) {
 function closeNotification() {
     const notification = document.getElementById('reg-notification');
     notification.classList.add('hidden');
+}
+
+function updateButtonText() {
+    if(tries == 5){
+        addSecondButton.textContent = `GIVE UP?`;
+    }else{
+        addSecondButton.textContent = `SKIP? (+${tries + 1}s)`;
+    }
+}
+
+function updateMeter(duration) {
+    if(isPlaying){
+        if(time <= (duration / 10)){
+            time += 1;
+            console.log(time)
+            let newWidth = (time / (duration / 10)) * widthSequence[tries];
+            meter.style.width = newWidth + "%";
+        }
+    }
+}
+
+function addTimePart() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+        #time div div:nth-child(${tries + 2}) {
+            border-left: var(--gray-color) 1px solid;
+            background-color: var(--gray-color);
+        }
+    `;
+    document.head.appendChild(style);
+    styleElements.push(style);
+
+    console.log('ADDING TIME PART');
+}
+
+function removeAllTimeParts() {
+    styleElements.forEach(style => {
+        document.head.removeChild(style);
+    });
+    styleElements = []; 
+    console.log('REMOVED ALL TIME PARTS');
 }
 
 async function getAccessToken() {

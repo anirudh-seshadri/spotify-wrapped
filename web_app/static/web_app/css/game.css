@@ -172,7 +172,6 @@ h1, #streak, .buttons div, #playAgain, #play p {
 
 #time {
     height: 15px;
-    /* width: 100%; */
     border: var(--gray-color) 1px solid;
     margin-left: -1px;
 }
@@ -194,6 +193,7 @@ h1, #streak, .buttons div, #playAgain, #play p {
     position: absolute;
     left: 0;
     border: none;
+    transition: width 0.1s ease;
 }
 #time-parts div {
     border-right: var(--gray-color) 1px solid;
