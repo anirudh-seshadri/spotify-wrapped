@@ -19,6 +19,8 @@ const translations = {
         'profile': "Profile",
 
         // Profile Page
+        'profile_title': 'Profile',
+        'profile_settings': 'Profile Settings',
         'edit_profile': 'Edit Profile',
         'change_password': 'Change Password',
         'logout': 'Log Out',
@@ -53,6 +55,8 @@ const translations = {
         'profile': "Perfil",
 
         // Profile Page
+        'profile_title': 'Perfil',
+        'profile_settings': 'Configuración del Perfil',
         'edit_profile': 'Editar Perfil',
         'change_password': 'Cambiar Contraseña',
         'logout': 'Cerrar Sesión',
@@ -87,7 +91,9 @@ const translations = {
         'profile': "Profil",
 
         // Profile Page
-        'edit_profile': 'Modifier le profil',
+        'profile_title': 'Profil',
+        'profile_settings': 'Paramètres du Profil',
+        'edit_profile': 'Modifier le Profil',
         'change_password': 'Changer le mot de passe',
         'logout': 'Déconnexion',
         'member_since': 'Membre depuis',

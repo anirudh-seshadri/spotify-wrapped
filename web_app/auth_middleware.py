@@ -25,6 +25,8 @@ class SpotifyAuthMiddleware:
             reverse('spotify_back'),
             reverse('login'),
             reverse('register'),
+            reverse('welcome'),
+            reverse('profile'),  # Add profile to exempt paths
         ]
         if request.path in exempt_paths:
             return self.get_response(request)

@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('', views.welcome, name='welcome'),  # Root URL shows welcome page
     path('login/', views.login_view, name='login'),
     path('register/', views.register, name='register'),
     path('logout/', views.logout_view, name='logout'),
@@ -13,10 +14,6 @@ urlpatterns = [
     path('api/recently-played/', views.get_recently_played, name='get_recently_played'),
     path('api/saved-tracks/', views.get_saved_tracks, name='get_saved_tracks'),
     path('api/track-features/<str:track_id>/', views.get_track_features, name='get_track_features'),
-    path('', views.welcome, name='welcome'),
-    path('login/', views.login, name='login'),
-    path('login/form/', views.login_form, name='login_form'),
-    path('signup/form/', views.signup_form, name='signup_form'),
     path('pastwraps/', views.pastwraps, name='pastwraps'), 
     path('profile/', views.profile, name='profile'),
 ]
