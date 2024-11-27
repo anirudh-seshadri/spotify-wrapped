@@ -27,10 +27,18 @@ class SpotifyAuthMiddleware:
             reverse('register'),
             reverse('welcome'),
             reverse('profile'),  # Add profile to exempt paths
+            reverse('top_songs'),
+            reverse('time'),
+            reverse('aura'),
+            reverse('friends')
         ]
-        if request.path in exempt_paths:
-            return self.get_response(request)
+        normalized_request_path = request.path.rstrip('/')
+        normalized_exempt_paths = [path.rstrip('/') for path in exempt_paths]
 
+        if normalized_request_path in normalized_exempt_paths:
+            return self.get_response(request)
+        
+        print("NOT EXEMPT", request.path)
         # Check if the user is logged in
         if not request.user.is_authenticated:
             logger.debug("User not logged in or registered")
@@ -43,7 +51,6 @@ class SpotifyAuthMiddleware:
         refresh_token = request.session.get('refresh_token')
         expires_in = request.session.get('expires_in')
         time_obtained_timestamp = request.session.get('time_obtained')
-        time_obtained_timestamp
 
         if time_obtained_timestamp:
             # Convert timestamp to datetime object
@@ -65,7 +72,7 @@ class SpotifyAuthMiddleware:
                         logger.debug("New tokens obtained after refreshing")
                         request.session['access_token'] = new_tokens['access_token']
                         request.session['expires_in'] = new_tokens['expires_in']
-                        request.session['time_obtained'] = dj_timezone.now()
+                        #request.session['time_obtained'] = dj_timezone.now()
                     else:
                         logger.error("Failed to refresh access token")
                         return redirect(reverse('spotify_login'))

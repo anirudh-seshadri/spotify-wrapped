@@ -91,6 +91,43 @@
             height: 24px;
             color: var(--text-color);
         }
+
+        .next-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .next-button {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(90deg, #1ED760, #17c15e);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.25rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(29, 215, 96, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .next-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(29, 215, 96, 0.4);
+        }
+        
+        .next-button .icon {
+            width: 24px;
+            height: 24px;
+            margin-left: 0.5rem;
+            transition: transform 0.2s ease;
+        }
+        
+        .next-button:hover .icon {
+            transform: translateX(5px);
+        }
+        
     </style>
 </head>
 <body class="bg-[#23063A] min-h-screen flex flex-col justify-between">
@@ -126,6 +163,15 @@
         <!-- Main Content -->
         <div class="welcome-container text-center">
             <h1 class="text-4xl font-bold mb-8">Create a Wrapped Account</h1>
+        </div>
+
+        <div class="next-button-container">
+            <a href="/top-songs" class="next-button">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
         </div>
     </div>
 
