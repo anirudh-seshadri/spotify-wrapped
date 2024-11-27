@@ -20,6 +20,8 @@ urlpatterns = [
     path('guess-song/', views.guess_song, name="guess_song"),
     path('time/', views.time, name="time"),
     path('top-songs/', views.top_songs, name="top_songs"),
+    path('top-genres/', views.top_genres, name="top_genres"),
     path('aura/', views.aura, name="aura"),
-    path('friends/', views.friends, name="friends")
+    path('friends/', views.friends, name="friends"),
+    path('in-year-you/', views.in_year_you, name="in_year_you")
 ]

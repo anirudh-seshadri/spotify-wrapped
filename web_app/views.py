@@ -249,6 +249,9 @@ def top_artists(request):
 def top_songs(request):
     return render(request, 'top_songs.html')
 
+def top_genres(request):
+    return render(request, 'top_genres.html')
+
 def time(request):
     return render(request, 'time.html')
 
@@ -257,3 +260,6 @@ def aura(request):
 
 def friends(request):
     return render(request, 'friends.html')
+
+def in_year_you(request):
+    return render(request, 'in_year_you.html')
