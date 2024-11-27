@@ -33,7 +33,7 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 1400px;
             margin: 0 auto;
             position: relative;
             z-index: 2;
@@ -64,7 +64,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 2rem auto;
+            margin: 5rem auto;
             background: linear-gradient(90deg, #1ED760, #17c15e);
             width: 100px;
             height: 100px;
@@ -86,18 +86,21 @@
 
         .song-list {
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .song-card {
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             border-radius: 16px;
-            padding: 1rem;
+            padding: 1.5rem;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
+            width: calc(33.333% - 1.5rem);
+            min-width: 350px;
             transform: translateX(-100%);
             animation: slideInRight 0.5s ease-out forwards;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -127,18 +130,10 @@
             transform: translateX(100%);
         }
 
-        .rank {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #1ED760;
-            min-width: 2.5rem;
-            text-shadow: 0 0 10px rgba(29, 215, 96, 0.3);
-        }
-
         .album-art {
-            width: 64px;
-            height: 64px;
-            border-radius: 8px;
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
             background: #333;
             position: relative;
             overflow: hidden;
@@ -166,19 +161,19 @@
 
         .song-name {
             font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 0.25rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .artist {
             opacity: 0.8;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
         }
 
         .next-button-container {
             display: flex;
             justify-content: center;
-            margin-top: 2rem;
+            margin-top: 4rem;
         }
         
         .next-button {
@@ -210,7 +205,6 @@
         .next-button:hover .icon {
             transform: translateX(5px);
         }
-        
 
         @keyframes float {
             0%, 100% { transform: translate(0, 0); }
@@ -234,6 +228,32 @@
             }
         }
 
+        @media (max-width: 1200px) {
+            .song-card {
+                width: calc(50% - 1.5rem);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .song-card {
+                width: 100%;
+                min-width: 250px;
+            }
+
+            .album-art {
+                width: 80px;
+                height: 80px;
+            }
+
+            .song-name {
+                font-size: 1.2rem;
+            }
+
+            .artist {
+                font-size: 1rem;
+            }
+        }
+
         @media (max-width: 480px) {
             .title {
                 font-size: 2rem;
@@ -241,41 +261,20 @@
             .subtitle {
                 font-size: 1rem;
             }
-            .rank {
-                font-size: 1.5rem;
-                min-width: 2rem;
-            }
-            .album-art {
-                width: 48px;
-                height: 48px;
-            }
-            .song-name {
-                font-size: 1rem;
-            }
         }
 
-        /* Sliding out animation */
         @keyframes slideOut {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
         }
 
         .page-exit {
             animation: slideOut 0.5s forwards;
         }
 
-        /* Sliding in animation */
         @keyframes slideIn {
-            0% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(0);
-            }
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(0); }
         }
 
         .page-enter {
