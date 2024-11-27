@@ -16,4 +16,8 @@ urlpatterns = [
     path('api/track-features/<str:track_id>/', views.get_track_features, name='get_track_features'),
     path('pastwraps/', views.pastwraps, name='pastwraps'), 
     path('profile/', views.profile, name='profile'),
+    path('time/', views.time, name="time"),
+    path('top-songs/', views.top_songs, name="top_songs"),
+    path('aura/', views.aura, name="aura"),
+    path('friends/', views.friends, name="friends")
 ]

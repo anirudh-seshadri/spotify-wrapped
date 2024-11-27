@@ -222,6 +222,7 @@ def welcome(request):
     return render(request, 'welcome.html')
 
 def login(request):
+    print("HERE")
     return render(request, 'login.html')
 
 def login_form(request):
@@ -238,3 +239,15 @@ def pastwraps(request):
 def profile(request):
     # Add login_required decorator if you want to restrict access to logged-in users only
     return render(request, 'profile.html')
+
+def top_songs(request):
+    return render(request, 'top_songs.html')
+
+def time(request):
+    return render(request, 'time.html')
+
+def aura(request):
+    return render(request, 'aura.html')
+
+def friends(request):
+    return render(request, 'friends.html')
