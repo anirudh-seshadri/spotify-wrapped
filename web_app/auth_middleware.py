@@ -27,6 +27,8 @@ class SpotifyAuthMiddleware:
             reverse('register'),
             reverse('welcome'),
             reverse('profile'),  # Add profile to exempt paths
+            reverse('top_artists'),
+            reverse('guess_song'),
             reverse('top_songs'),
             reverse('time'),
             reverse('aura'),
