@@ -240,6 +240,12 @@ def profile(request):
     # Add login_required decorator if you want to restrict access to logged-in users only
     return render(request, 'profile.html')
 
+def guess_song(request):
+    return render(request, 'guess_song.html')
+    
+def top_artists(request):
+    return render(request, 'top_artists.html')
+    
 def top_songs(request):
     return render(request, 'top_songs.html')
 
