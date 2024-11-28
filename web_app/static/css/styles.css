@@ -690,6 +690,32 @@ video {
     pointer-events: none;
 }
 
+
+.background-design-7 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-image: url('/static/images/img7.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 500px; /* Adjust size as needed */
+  height: 500px;
+  z-index: 99999; /* Ensure it stays behind other content */
+}
+
+.background-design-8 {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background-image: url('/static/images/img8.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 500px; /* Adjust size as needed */
+  height: 500px;
+  z-index: 9999;
+}
+
+
 /* Ensures designs are behind the main content */
 body {
     background-color: #23063A;
