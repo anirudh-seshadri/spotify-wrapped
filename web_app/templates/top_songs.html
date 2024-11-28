@@ -367,19 +367,17 @@
             document.body.classList.add('page-enter');
         });
     
-        // Handle navigation with slide-out animation
+     
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', event => {
-                event.preventDefault(); // Prevent immediate navigation
-                const href = event.target.getAttribute('href'); // Get link target
+                event.preventDefault();
+                const href = event.target.closest('a').getAttribute('href');
     
-                // Add slide-out class to body
                 document.body.classList.add('page-exit');
     
-                // Delay navigation until the animation ends
                 setTimeout(() => {
                     window.location.href = href;
-                }, 500); // Match the animation duration
+                }, 500);
             });
         });
     </script>

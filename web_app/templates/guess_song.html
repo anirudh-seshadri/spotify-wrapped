@@ -299,8 +299,8 @@
         </div>
 
         <div class="next-button-container">
-            <a href="/time" class="next-button">
-                Next
+            <a href="/" class="next-button">
+                Back to Home
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
@@ -359,19 +359,17 @@
             document.body.classList.add('page-enter');
         });
     
-        // Handle navigation with slide-out animation
+       
         document.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', event => {
-                event.preventDefault(); // Prevent immediate navigation
-                const href = event.target.getAttribute('href'); // Get link target
+                event.preventDefault();
+                const href = event.target.closest('a').getAttribute('href');
     
-                // Add slide-out class to body
                 document.body.classList.add('page-exit');
     
-                // Delay navigation until the animation ends
                 setTimeout(() => {
                     window.location.href = href;
-                }, 500); // Match the animation duration
+                }, 500);
             });
         });
     </script>
