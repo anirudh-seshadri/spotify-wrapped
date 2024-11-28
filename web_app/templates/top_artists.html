@@ -345,30 +345,56 @@
     </div>
 
     <script>
-        // Sample top artists data
-        const topArtists = [
-            {
-                rank: 1,
-                name: "Taylor Swift",
-                image: "/api/placeholder/64/64"
-            },
-            {
-                rank: 2,
-                name: "Harry Styles",
-                image: "/api/placeholder/64/64"
-            },
-            {
-                rank: 3,
-                name: "Lizzo",
-                image: "/api/placeholder/64/64"
+        async function fetchTopArtists() {
+            try {
+                const response = await fetch('/api/top-artists/');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+    
+                if (data.items && Array.isArray(data.items)) {
+                    return data.items;
+                } else {
+                    throw new Error('Expected "items" to be an array in the response');
+                }
+            } catch (error) {
+                console.error('Error fetching top artists:', error);
+                return [];  
             }
-        ];
-
+        }
+    
+        async function getArtistDetails(artist) {
+            const imageUrl = artist.images && artist.images.length > 0 ? artist.images[0].url : '/api/placeholder/64/6';
+            return {
+                name: artist.name,
+                image: imageUrl
+            };
+        }
+    
+        async function populateTopArtists() {
+            const artists = await fetchTopArtists(); 
+            if (!artists || artists.length === 0) {
+                console.log('No top artists data available!');
+                return [];
+            }
+    
+            // Process all artists concurrently
+            const topArtists = await Promise.all(artists.slice(0, 3).map(async (artist, index) => {
+                return {
+                    rank: index + 1,
+                    ...await getArtistDetails(artist)
+                };
+            }));
+    
+            return topArtists;
+        }
+    
         function createArtistCard(artist, index) {
             const card = document.createElement('div');
             card.className = 'artist-card';
             card.style.animationDelay = `${index * 0.1}s`;
-            
+    
             card.innerHTML = `
                 <div class="rank">#${artist.rank}</div>
                 <div class="artist-pic">
@@ -376,17 +402,22 @@
                 </div>
                 <div class="artist-name">${artist.name}</div>
             `;
-            
+    
             return card;
         }
-
-        // Add artists to the grid with staggered animation
-        const artistGrid = document.querySelector('.artist-grid');
-
-        // Add all artists to the grid
-        topArtists.forEach((artist, index) => {
-            artistGrid.appendChild(createArtistCard(artist, index));
-        });
+    
+        async function createArtistCards() {
+            const topArtists = await populateTopArtists(); 
+    
+            if (topArtists && topArtists.length > 0) {
+                const artistGrid = document.querySelector('.artist-grid');
+                topArtists.forEach((artist, index) => {
+                    artistGrid.appendChild(createArtistCard(artist, index)); 
+                });
+            }
+        }
+    
+        createArtistCards(); 
     </script>
 
     <script>
