@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Literata:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Theme toggle functionality remains the same -->
     <script>
-        // Theme toggle functionality
         function toggleTheme() {
             const body = document.body;
             const button = document.getElementById('theme-toggle');
@@ -27,7 +27,6 @@
             }
         }
 
-        // Apply saved theme on page load
         function applyTheme() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             const body = document.body;
@@ -121,16 +120,27 @@
         </button>
     </div>
 
-    <!-- Persistent Banner at the Top -->
+    <!-- Header -->
     <header class="banner">
         <div class="flex justify-end items-center py-4 px-8">
             <a href="{% url 'profile' %}" class="hover:underline text-white profile-link">Profile</a>
         </div>
     </header>
 
-    <!-- Main Container for Content and Background Elements -->
+    <!-- Messages Display -->
+    {% if messages %}
+    <div class="messages fixed top-16 right-4 z-50">
+        {% for message in messages %}
+        <div class="{% if message.tags %}message {{ message.tags }}{% endif %} bg-white dark:bg-gray-800 text-gray-800 dark:text-white p-4 rounded-lg shadow-lg mb-4">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Container -->
     <div class="flex flex-col items-center justify-center relative flex-grow">
-        <!-- Decorative Elements on the Same Layer as Content -->
+        <!-- Background designs remain the same -->
         <div class="background-design-1"></div>
         <div class="background-design-2"></div>
         <div class="background-design-3"></div>
@@ -151,19 +161,24 @@
             <div id="login-form-container" class="hidden">
                 <div onclick="showChoiceContainer()" class="back-button">&larr;</div>
                 <h2 class="text-2xl font-bold mb-6">Log in</h2>
-                <input type="text" placeholder="Username" class="input-field">
-                <input type="password" placeholder="Password" class="input-field">
-                <div class="button mt-6">Log in</div>
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <input type="text" name="username" placeholder="Username" class="input-field" required>
+                    <input type="password" name="password" placeholder="Password" class="input-field" required>
+                    <button type="submit" class="button mt-6">Log in</button>
+                </form>
             </div>
 
             <!-- Signup Form Container -->
             <div id="signup-form-container" class="hidden">
                 <div onclick="showChoiceContainer()" class="back-button">&larr;</div>
                 <h2 class="text-2xl font-bold mb-6">Create Account</h2>
-                <input type="email" placeholder="Email Address" class="input-field">
-                <input type="text" placeholder="Username" class="input-field">
-                <input type="password" placeholder="Password" class="input-field">
-                <div class="button mt-6">Create Account</div>
+                <form method="POST" action="{% url 'register' %}">
+                    {% csrf_token %}
+                    <input type="text" name="username" placeholder="Username" class="input-field" required>
+                    <input type="password" name="password" placeholder="Password" class="input-field" required>
+                    <button type="submit" class="button mt-6">Create Account</button>
+                </form>
             </div>
         </div>
     </div>
@@ -191,6 +206,16 @@
             document.getElementById('signup-form-container').classList.add('hidden');
             document.getElementById('choice-container').classList.remove('hidden');
         }
+
+        // Auto-hide messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const messages = document.querySelector('.messages');
+                if (messages) {
+                    messages.style.display = 'none';
+                }
+            }, 5000);
+        });
     </script>
 </body>
 </html>

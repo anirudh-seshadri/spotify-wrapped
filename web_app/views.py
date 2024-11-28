@@ -221,18 +221,6 @@ def index(request):
 def welcome(request):
     return render(request, 'welcome.html')
 
-def login(request):
-    print("HERE")
-    return render(request, 'login.html')
-
-def login_form(request):
-    # Placeholder for login form logic
-    return render(request, 'login_form.html')
-
-def signup_form(request):
-    # Placeholder for signup form logic
-    return render(request, 'signup_form.html')
-
 def pastwraps(request):
     return render(request, 'pastwraps.html')
 

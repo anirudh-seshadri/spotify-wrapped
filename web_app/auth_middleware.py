@@ -74,7 +74,7 @@ class SpotifyAuthMiddleware:
                         logger.debug("New tokens obtained after refreshing")
                         request.session['access_token'] = new_tokens['access_token']
                         request.session['expires_in'] = new_tokens['expires_in']
-                        #request.session['time_obtained'] = dj_timezone.now()
+                        request.session['time_obtained'] = dj_timezone.now().timestamp()
                     else:
                         logger.error("Failed to refresh access token")
                         return redirect(reverse('spotify_login'))
