@@ -67,6 +67,7 @@ h1, #streak, .buttons div, #playAgain, #play p {
     height: 40px;
     margin: 10px 0;
     border: var(--light-color) 1px solid;
+    border-radius: 50px;
     padding: 0 15px;
     display: flex;
 }

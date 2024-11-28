@@ -344,6 +344,11 @@ function submit(){
         fillMeter();
         showNotification(`YOU GOT IT! The song was ${songName} by ${artistName}.`);
         finished = true;
+    }else if(
+        oneLetterDifference(userGuess.replace(/[^\w&]/g, '').toLowerCase(), correctGuess) ||
+        oneLetterDifference(userGuess.replace(/[^\w&]/g, '').toLowerCase(), noPar)
+    ){
+        showShortNotification("You're so close! Only one letter off!")
     }else{
         updateGuessDiv(userGuess, false);
         if(tries == 5){
@@ -351,12 +356,31 @@ function submit(){
             finished = true;
         }else {
             tries++;
-            showShortNotification('WRONG! Adding another second...');
+            showShortNotification('WRONG! Adding more time...');
             updateButtonText();
             addTimePart();
         }
     }
     document.getElementById('guess').value = '';
+}
+
+function oneLetterDifference(str1, str2){
+    if (str1.length !== str2.length) {
+        return false;
+    }
+
+    let differenceCount = 0;
+
+    for (let i = 0; i < str1.length; i++) {
+        if (str1[i] !== str2[i]) {
+            differenceCount++;
+            if (differenceCount > 1) {
+                return false;
+            }
+        }
+    }
+
+    return differenceCount === 1;
 }
 
 function showShortNotification(message) {
