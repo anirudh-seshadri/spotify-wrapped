@@ -26,13 +26,13 @@ class SpotifyAuthMiddleware:
             reverse('login'),
             reverse('register'),
             reverse('welcome'),
-            reverse('profile'),  # Add profile to exempt paths
-            reverse('top_artists'),
-            reverse('guess_song'),
-            reverse('top_songs'),
-            reverse('time'),
-            reverse('aura'),
-            reverse('friends')
+            # reverse('profile'),  # Add profile to exempt paths
+            # reverse('top_artists'),
+            # reverse('guess_song'),
+            # reverse('top_songs'),
+            # reverse('time'),
+            # reverse('aura'),
+            # reverse('friends')
         ]
         normalized_request_path = request.path.rstrip('/')
         normalized_exempt_paths = [path.rstrip('/') for path in exempt_paths]
