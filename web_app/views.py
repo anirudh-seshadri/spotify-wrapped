@@ -412,7 +412,8 @@ def index(request):
     return render(request, 'index.html', context)
 
 def welcome(request):
-    return render(request, 'welcome.html')
+    is_logged_in = request.user.is_authenticated  
+    return render(request, 'welcome.html', {'is_logged_in': is_logged_in})
 
 def pastwraps(request):
     return render(request, 'pastwraps.html')
