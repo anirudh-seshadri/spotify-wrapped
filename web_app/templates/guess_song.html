@@ -74,7 +74,7 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .play-button .fa-play {
+        .play-button i {
             color: white;
             font-size: 40px;
         }
@@ -280,6 +280,25 @@
         .page-enter {
             animation: slideIn 0.5s forwards;
         }
+
+        .song-card.correct-selection {
+            background: rgba(29, 215, 96, 0.3) !important;
+            border: 2px solid #1ED760;
+            box-shadow: 0 0 20px rgba(29, 215, 96, 0.5);
+        }
+
+        .song-card.incorrect-selection {
+            background: rgba(255, 0, 0, 0.3) !important;
+            border: 2px solid red;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .song-card.correct-selection .song-name,
+        .song-card.incorrect-selection .song-name,
+        .song-card.correct-selection .artist,
+        .song-card.incorrect-selection .artist {
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -290,7 +309,7 @@
             <p class="subtitle">Click the song you think you hear</p>
         </header>
         
-        <div class="play-button">
+        <div class="play-button" id="play-button">
             <i class="fa-solid fa-play"></i>
         </div>
 
@@ -308,31 +327,203 @@
         </div>
     </div>
 
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+
     <script>
-        // Sample top songs data
-        const topSongs = [
-            {
-                name: "Anti-Hero",
-                artist: "Taylor Swift",
-                albumArt: "/api/placeholder/64/64"
-            },
-            {
-                name: "As It Was",
-                artist: "Harry Styles",
-                albumArt: "/api/placeholder/64/64"
-            },
-            {
-                name: "About Damn Time",
-                artist: "Lizzo",
-                albumArt: "/api/placeholder/64/64"
-            },
-        ];
+        let selectedTrack;
+        let topSongs = [];
+        let isPlaying = false;
+        let deviceReady = false;
+        let device_id;
+        let player;
+        let accessToken;
+
+        async function getAccessToken() {
+            try {
+                const response = await fetch('/get_access_token/');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.access_token;  // Return the access token from the response
+                } else {
+                    console.error('Failed to retrieve access token:', response.statusText);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error fetching access token:', error);
+                return null;
+            }
+        }
+
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            getAccessToken().then(token => {
+                if (token) {
+                    accessToken = token;
+
+                    // Initialize the Spotify player once the access token is obtained
+                    player = new Spotify.Player({
+                        name: 'Web Playback SDK Quick Start Player',
+                        getOAuthToken: cb => { cb(accessToken); },  // Use the access token
+                        volume: 0.5
+                    });
+
+                    // Ready
+                    player.addListener('ready', ({ device_id: readyDeviceId }) => {
+                        device_id = readyDeviceId;
+                        deviceReady = true;
+                        console.log('Ready with Device ID', device_id);
+                    });
+
+                    // Not Ready
+                    player.addListener('not_ready', ({ device_id }) => {
+                        console.log('Device ID has gone offline', device_id);
+                    });
+
+                    player.addListener('initialization_error', ({ message }) => {
+                        console.log('INITIALIZATION');
+                        console.error(message);
+                    });
+
+                    player.addListener('authentication_error', ({ message }) => {
+                        console.log('AUTHENTICATION');   
+                        console.error(message);
+                    });
+
+                    player.addListener('account_error', ({ message }) => {
+                        console.log('ACCOUNT ERROR');
+                        console.error(message);
+                    });
+                    player.connect();  
+                } else {
+                    console.error('No access token found.');
+                }
+            }).catch(error => {
+                console.error('Error retrieving access token:', error);
+            });
+        };
+
+        async function playClip() {
+            try {
+                if (!device_id) {
+                    console.error('Device ID not available');
+                    return;
+                }
+
+                const trackUri = localStorage.getItem('trackUri');
+
+                // Start playback at the beginning of the track
+                await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ uris: [trackUri] })
+                });
+
+                duration = 5000;
+                console.log(`Playing for 5 seconds`);
+                isPlaying = true;
+
+                setTimeout(async () => {
+                    await player.pause();
+                    console.log(`Paused after 5 seconds`);
+                    play = document.getElementById('play-button');
+                    play.innerHTML = '<span class="icon"><i class="fa-solid fa-play"></i></span>'
+                    isPlaying = false;
+                }, duration); 
+            } catch (error) {
+                console.error('Error playing the track:', error);
+            }
+        };
+
+        document.getElementById('play-button').onclick = function() {
+            if(!trackReady || !deviceReady || isPlaying){
+                return;
+            }
+            const play = this;
+            play.innerHTML = '<span class="icon"><i class="fa-solid fa-music"></i></span>'
+            playClip();
+        };
+
+
+        async function getTracks() {
+            const url = '/get_tracks/top50/placeholder/';
+            console.log('GETTING TRACKS');
+        
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+        
+                if (data.tracks) {
+                    const tracks = data.tracks;
+                    console.table(tracks, ["title", "artist", "uri", "duration"]); // Display tracks in a table format
+                    
+                    topSongs = tracks.slice(0, 3).map(track => ({
+                        name: track.title,
+                        artist: track.artist,
+                        albumArt: track.albumArt
+                    }));
+                    
+                    console.log('Top 3 Tracks:', topSongs);
+
+                    selectedTrack = tracks[Math.floor(Math.random() * 3)];
+    
+                    if (selectedTrack) {
+                        fetchTrackDetails(selectedTrack.uri.split(':')[2]);
+                    }else {
+                        console.log("No valid track selected after multiple attempts.");
+                    }
+
+
+                    // Add songs to the list with staggered animation
+                    const songList = document.querySelector('.song-list');
+                    topSongs.forEach((song, index) => {
+                        songList.appendChild(createSongCard(song, index));
+                    });
+
+                } else if (data.error) {
+                    console.error('Error:', data.error);
+                }
+            }catch(error){
+                console.error('Request failed', error);
+            }
+                
+        }
+
+        getTracks()
+
+        function fetchTrackDetails(trackID) {
+            console.log('FETCHING SPECIFIC TRACK!!')
+            const endpoint = `/get-spotify-track/${trackID}/`;
+        
+        
+            fetch(endpoint)
+            .then(response => response.json())
+            .then(responseData => {
+                if (responseData.error) {
+                    console.error(responseData.error);
+                    return;
+                }
+        
+                selectedTrack = responseData;
+        
+                songName = selectedTrack.song.split(' - ').slice(0, -1).join(' - ');
+                artistName = selectedTrack.song.split(' - ')[selectedTrack.song.split(' - ').length - 1];
+        
+                localStorage.setItem('songName', songName)
+                localStorage.setItem('trackUri', selectedTrack.uri)
+                trackReady = true;
+            })
+            .catch(error => console.error(error));
+        }
 
         function createSongCard(song, index) {
             const card = document.createElement('div');
             card.className = 'song-card';
             card.style.animationDelay = `${index * 0.1}s`;
-            
+            card.dataset.name = song.name;
+
             card.innerHTML = `
                 <div class="album-art">
                     <img src="${song.albumArt}" alt="${song.name} album art">
@@ -342,15 +533,37 @@
                     <div class="artist">${song.artist}</div>
                 </div>
             `;
+
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.song-card').forEach(c => {
+                    c.style.pointerEvents = 'none';
+                });
+        
+                const correctSongName = localStorage.getItem('songName');
+        
+                document.querySelectorAll('.song-card').forEach(c => {
+                    c.classList.remove('correct-selection', 'incorrect-selection');
+                });
+
+                console.log(this.dataset.name, correctSongName)
+
+                if (this.dataset.name === correctSongName) {
+                    this.classList.add('correct-selection');
+
+                } else {
+                    this.classList.add('incorrect-selection');
+                    
+                    document.querySelectorAll('.song-card').forEach(c => {
+                        console.log(c.dataset.name, correctSongName)
+                        if (c.dataset.name === correctSongName) {
+                            c.classList.add('correct-selection');
+                        }
+                    });
+                }
+            });
             
             return card;
         }
-
-        // Add songs to the list with staggered animation
-        const songList = document.querySelector('.song-list');
-        topSongs.forEach((song, index) => {
-            songList.appendChild(createSongCard(song, index));
-        });
     </script>
 
     <script>
@@ -372,6 +585,8 @@
                 }, 500);
             });
         });
+
+
     </script>
 </body>
 </html>
