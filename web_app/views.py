@@ -86,7 +86,7 @@ def spotify_authentication(request):
     if not request.user.is_authenticated:
         return redirect('login')
 
-    scope = 'user-read-private user-read-email user-top-read'
+    scope = 'user-read-private user-read-email user-top-read user-read-recently-played user-library-read streaming user-read-playback-state user-modify-playback-state'    
     redirect_uri = request.build_absolute_uri(reverse('spotify_back'))
     params = {
         'client_id': settings.SPOTIFY_CLIENT_ID,
