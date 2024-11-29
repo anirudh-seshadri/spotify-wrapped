@@ -333,11 +333,15 @@ def get_tracks(request, content_type, query):
                 if track.get("uri").split(':')[1] != 'track' or not cleanTitle: 
                     continue 
 
+                album_images = track.get("album", {}).get("images", [])
+                albumArt = album_images[0]["url"] if album_images else ""  
+
                 track_item = { 
                     "title": track.get("name"), 
                     "artist": track["artists"][0]["name"] if track.get("artists") else "Unknown", 
                     "uri": track.get("uri"), 
-                    "duration": track.get("duration_ms") 
+                    "duration": track.get("duration_ms"),
+                    "albumArt": albumArt
                 } 
                 if not any(existing["title"] == track_item["title"] for existing in track_data): 
                     track_data.append(track_item) 

@@ -310,23 +310,96 @@
 
     <script>
         // Sample top songs data
-        const topSongs = [
+        {% comment %} const topSongs = [
             {
                 name: "Anti-Hero",
                 artist: "Taylor Swift",
-                albumArt: "/api/placeholder/64/64"
+                albumArt: ""
             },
             {
                 name: "As It Was",
                 artist: "Harry Styles",
-                albumArt: "/api/placeholder/64/64"
+                albumArt: ""
             },
             {
                 name: "About Damn Time",
                 artist: "Lizzo",
-                albumArt: "/api/placeholder/64/64"
+                albumArt: ""
             },
-        ];
+        ]; {% endcomment %}
+
+        let selectedTrack;
+        let topSongs = [];
+
+        async function getTracks() {
+            const url = '/get_tracks/top50/placeholder/';
+            console.log('GETTING TRACKS');
+        
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+        
+                if (data.tracks) {
+                    const tracks = data.tracks;
+                    console.table(tracks, ["title", "artist", "uri", "duration"]); // Display tracks in a table format
+                    
+                    topSongs = tracks.slice(0, 3).map(track => ({
+                        name: track.title,
+                        artist: track.artist,
+                        albumArt: track.albumArt
+                    }));
+                    
+                    console.log('Top 3 Tracks:', topSongs);
+
+                    selectedTrack = tracks[Math.floor(Math.random() * 3)];
+    
+                    if (selectedTrack) {
+                        fetchTrackDetails(selectedTrack.uri.split(':')[2]);
+                    }else {
+                        console.log("No valid track selected after multiple attempts.");
+                    }
+
+
+                    // Add songs to the list with staggered animation
+                    const songList = document.querySelector('.song-list');
+                    topSongs.forEach((song, index) => {
+                        songList.appendChild(createSongCard(song, index));
+                    });
+
+                } else if (data.error) {
+                    console.error('Error:', data.error);
+                }
+            }catch(error){
+                console.error('Request failed', error);
+            }
+                
+        }
+
+        getTracks()
+
+        function fetchTrackDetails(trackID) {
+            console.log('FETCHING SPECIFIC TRACK!!')
+            const endpoint = `/get-spotify-track/${trackID}/`;
+        
+        
+            fetch(endpoint)
+            .then(response => response.json())
+            .then(responseData => {
+                if (responseData.error) {
+                    console.error(responseData.error);
+                    return;
+                }
+        
+                selectedTrack = responseData;
+        
+                songName = selectedTrack.song.split(' - ')[0];
+                artistName = selectedTrack.song.split(' - ')[selectedTrack.song.split(' - ').length - 1];
+        
+                localStorage.setItem('songName', songName)
+                trackReady = true;
+            })
+            .catch(error => console.error(error));
+        }
 
         function createSongCard(song, index) {
             const card = document.createElement('div');
@@ -345,12 +418,6 @@
             
             return card;
         }
-
-        // Add songs to the list with staggered animation
-        const songList = document.querySelector('.song-list');
-        topSongs.forEach((song, index) => {
-            songList.appendChild(createSongCard(song, index));
-        });
     </script>
 
     <script>
