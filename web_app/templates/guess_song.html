@@ -280,6 +280,25 @@
         .page-enter {
             animation: slideIn 0.5s forwards;
         }
+
+        .song-card.correct-selection {
+            background: rgba(29, 215, 96, 0.3) !important;
+            border: 2px solid #1ED760;
+            box-shadow: 0 0 20px rgba(29, 215, 96, 0.5);
+        }
+
+        .song-card.incorrect-selection {
+            background: rgba(255, 0, 0, 0.3) !important;
+            border: 2px solid red;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .song-card.correct-selection .song-name,
+        .song-card.incorrect-selection .song-name,
+        .song-card.correct-selection .artist,
+        .song-card.incorrect-selection .artist {
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -489,7 +508,7 @@
         
                 selectedTrack = responseData;
         
-                songName = selectedTrack.song.split(' - ')[0];
+                songName = selectedTrack.song.split(' - ').slice(0, -1).join(' - ');
                 artistName = selectedTrack.song.split(' - ')[selectedTrack.song.split(' - ').length - 1];
         
                 localStorage.setItem('songName', songName)
@@ -503,7 +522,8 @@
             const card = document.createElement('div');
             card.className = 'song-card';
             card.style.animationDelay = `${index * 0.1}s`;
-            
+            card.dataset.name = song.name;
+
             card.innerHTML = `
                 <div class="album-art">
                     <img src="${song.albumArt}" alt="${song.name} album art">
@@ -513,6 +533,34 @@
                     <div class="artist">${song.artist}</div>
                 </div>
             `;
+
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.song-card').forEach(c => {
+                    c.style.pointerEvents = 'none';
+                });
+        
+                const correctSongName = localStorage.getItem('songName');
+        
+                document.querySelectorAll('.song-card').forEach(c => {
+                    c.classList.remove('correct-selection', 'incorrect-selection');
+                });
+
+                console.log(this.dataset.name, correctSongName)
+
+                if (this.dataset.name === correctSongName) {
+                    this.classList.add('correct-selection');
+
+                } else {
+                    this.classList.add('incorrect-selection');
+                    
+                    document.querySelectorAll('.song-card').forEach(c => {
+                        console.log(c.dataset.name, correctSongName)
+                        if (c.dataset.name === correctSongName) {
+                            c.classList.add('correct-selection');
+                        }
+                    });
+                }
+            });
             
             return card;
         }
@@ -537,6 +585,8 @@
                 }, 500);
             });
         });
+
+
     </script>
 </body>
 </html>
