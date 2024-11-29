@@ -5,23 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped Game</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    {% comment %} <link rel="stylesheet" href="{% static 'css/styles.css' %}"> {% endcomment %}
     <link rel="stylesheet" href="{% static 'css/game.css' %}">
     <script src="https://kit.fontawesome.com/4ce1eac851.js" crossorigin="anonymous"></script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
-    {% comment %} <script src="{% static 'web_app/js/player.js' %}" defer></script> {% endcomment %}
     <script src="{% static 'js/game.js' %}" defer></script>
-    {% comment %} <script src="{% static 'web_app/js/gamestart.js' %}" defer></script> {% endcomment %}
 
 </head>
 <body>
-    <header>
+    {% comment %} <header>
         <nav>
             <a href="#">Welcome</a>
             <a href="{% url 'spotify_login' %}">Login with Spotify</a>
             <a href="#">Profile</a>
         </nav>
-    </header>
+    </header> {% endcomment %}
     <section id="top">
         <div id="title-div">
             <button id="skipSong">GIVE UP</button>
@@ -103,9 +101,9 @@
             <button id="addSecond">SKIP? (+1s)</button>
             <button id="submit">SUBMIT</button>
         </div>
-        <footer>
+        {% comment %} <footer>
             <p>© 2024 Your Project</p>
-        </footer>
+        </footer> {% endcomment %}
     </section>
 </body>
 </html>
