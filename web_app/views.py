@@ -162,7 +162,7 @@ def get_top_artists(request):
     try:
         access_token = request.session.get('access_token')
         time_range = request.GET.get('time_range', 'medium_term')
-        lim = request.GET.get('limit', '20')
+        lim = request.GET.get('limit', '50')
         headers = {'Authorization': f'Bearer {access_token}'}
         response = get(
             f'{SPOTIFY_API_BASE_URL}/me/top/artists',
@@ -428,6 +428,12 @@ def profile(request):
 
 def guess_song(request):
     return render(request, 'guess_song.html')
+
+def top_genres(request):
+    return render(request, 'top_genres.html')
+
+def in_year_you(request):
+    return render(request, 'in_year_you.html')
     
 def top_artists(request):
     return render(request, 'top_artists.html')
