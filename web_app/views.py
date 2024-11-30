@@ -428,6 +428,12 @@ def profile(request):
 
 def guess_song(request):
     return render(request, 'guess_song.html')
+
+def top_genres(request):
+    return render(request, 'top_genres.html')
+
+def in_year_you(request):
+    return render(request, 'in_year_you.html')
     
 def top_artists(request):
     return render(request, 'top_artists.html')
