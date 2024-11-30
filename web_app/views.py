@@ -265,7 +265,7 @@ def get_tracks(request, content_type, query):
     elif content_type == 'albumID': 
         endpoint = f"https://api.spotify.com/v1/albums/{query}/tracks?limit={limit}" 
     elif content_type == 'top50': 
-        endpoint = f"https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit={limit}" 
+        endpoint = f"https://api.spotify.com/v1/me/top/tracks?limit={limit}" 
     elif content_type == 'liked': 
         endpoint = f"https://api.spotify.com/v1/me/tracks?limit={limit}" 
     else: 
