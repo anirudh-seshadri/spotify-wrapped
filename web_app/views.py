@@ -147,7 +147,7 @@ def get_top_tracks(request):
     try:
         access_token = request.session.get('access_token')
         time_range = request.GET.get('time_range', 'medium_term')
-        lim = request.GET.get('limit', '20')
+        lim = request.GET.get('limit', '5')
         headers = {'Authorization': f'Bearer {access_token}'}
         response = get(
             f'{SPOTIFY_API_BASE_URL}/me/top/tracks',

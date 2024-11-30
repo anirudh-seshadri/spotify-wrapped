@@ -332,11 +332,20 @@
 
         getTracks()
 
-        function createSongCard(song, index) {
+            const response = await fetch('/api/top-tracks');
+
+            if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const topSongs = await response.json();
+            console.log(topSongs)
+
+            function createSongCard(song, index) {
             const card = document.createElement('div');
             card.className = 'song-card';
             card.style.animationDelay = `${index * 0.1}s`;
-            
+
             card.innerHTML = `
                 <div class="rank">#${song.rank}</div>
                 <div class="album-art">
@@ -351,15 +360,17 @@
                     <div>plays</div>
                 </div> {% endcomment %}
             `;
-            
-            return card;
-        }
 
-        // Add songs to the list with staggered animation
-        {% comment %} const songList = document.querySelector('.song-list');
-        topSongs.forEach((song, index) => {
-            songList.appendChild(createSongCard(song, index));
-        }); {% endcomment %}
+            return card;
+            }
+
+
+            // Add songs to the list with staggered animation
+            const songList = document.querySelector('.song-list');
+            topSongs.items.forEach((song, index) => {
+                songList.appendChild(createSongCard(song, index));
+            });
+        }
     </script>
 
     <script>
