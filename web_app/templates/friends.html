@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare with Friends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #500750 0%, #4c0747 50%, #450740 100%);
+            color: white;
+            overflow-x: hidden;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #1ED760, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .friend-card {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            opacity: 0;
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        .friend-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .friend-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .friend-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #1ED760, #9B4DE0);
+            margin-right: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .friend-info {
+            flex-grow: 1;
+        }
+
+        .friend-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .compatibility {
+            font-size: 1.2rem;
+            color: #1ED760;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .comparison-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .comparison-item:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-title {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .shared-item {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .match-percentage {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1ED760;
+            margin: 1rem 0;
+        }
+
+        .vibe-meter {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .vibe-fill {
+            height: 100%;
+            background: #1ED760;
+            transform-origin: left;
+            animation: fillWidth 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fillWidth {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        .shared-taste {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            gap: 1rem;
+        }
+
+        .taste-icon {
+            font-size: 1.5rem;
+        }
+
+        .taste-info {
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .taste-title {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .taste-detail {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .next-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .next-button {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(90deg, #1ED760, #17c15e);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.25rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(29, 215, 96, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .next-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(29, 215, 96, 0.4);
+        }
+        
+        .next-button .icon {
+            width: 24px;
+            height: 24px;
+            margin-left: 0.5rem;
+            transition: transform 0.2s ease;
+        }
+        
+        .next-button:hover .icon {
+            transform: translateX(5px);
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .friend-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .friend-avatar {
+                margin: 0 0 1rem 0;
+            }
+        }
+
+        /* Sliding out animation */
+        @keyframes slideOut {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .page-exit {
+            animation: slideOut 0.5s forwards;
+        }
+
+        /* Sliding in animation */
+        @keyframes slideIn {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .page-enter {
+            animation: slideIn 0.5s forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">Your Music Compatibility</h1>
+            <p>See how your taste matches with friends</p>
+        </header>
+
+        <div class="friend-card" style="animation-delay: 0.2s;">
+            <div class="friend-header">
+                <div class="friend-avatar">A</div>
+                <div class="friend-info">
+                    <div class="friend-name">Alex Smith</div>
+                    <div class="compatibility">93% Music Soulmate</div>
+                </div>
+            </div>
+
+            <div class="vibe-meter">
+                <div class="vibe-fill" style="width: 93%"></div>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <div class="comparison-title">Top Shared Artist</div>
+                    <div class="shared-item">The Weeknd</div>
+                    <div class="shared-taste">
+                        <div class="taste-icon">🎵</div>
+                        <div class="taste-info">
+                            <div class="taste-title">Both in your Top 5</div>
+                            <div class="taste-detail">You both played "Blinding Lights" 50+ times</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-item">
+                    <div class="comparison-title">Shared Genre</div>
+                    <div class="shared-item">Indie Pop</div>
+                    <div class="shared-taste">
+                        <div class="taste-icon">🎸</div>
+                        <div class="taste-info">
+                            <div class="taste-title">Major Genre Match</div>
+                            <div class="taste-detail">40% of your listening time</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-item">
+                    <div class="comparison-title">Similar Energy</div>
+                    <div class="match-percentage">85%</div>
+                    <div class="taste-detail">You both love high-energy tracks</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="friend-card" style="animation-delay: 0.4s;">
+            <div class="friend-header">
+                <div class="friend-avatar">S</div>
+                <div class="friend-info">
+                    <div class="friend-name">Sarah Johnson</div>
+                    <div class="compatibility">78% Groove Buddies</div>
+                </div>
+            </div>
+
+            <div class="vibe-meter">
+                <div class="vibe-fill" style="width: 78%"></div>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <div class="comparison-title">Top Shared Artist</div>
+                    <div class="shared-item">Taylor Swift</div>
+                    <div class="shared-taste">
+                        <div class="taste-icon">🎵</div>
+                        <div class="taste-info">
+                            <div class="taste-title">Favorite Album</div>
+                            <div class="taste-detail">Both loved "Midnights"</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-item">
+                    <div class="comparison-title">Shared Genre</div>
+                    <div class="shared-item">Pop</div>
+                    <div class="shared-taste">
+                        <div class="taste-icon">🎪</div>
+                        <div class="taste-info">
+                            <div class="taste-title">Common Ground</div>
+                            <div class="taste-detail">35% of shared listening</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-item">
+                    <div class="comparison-title">Mood Match</div>
+                    <div class="match-percentage">72%</div>
+                    <div class="taste-detail">Similar emotional playlists</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="next-button-container">
+            <a href="/" class="next-button">
+                Back to Home
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Add intersection observer for smooth scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateX(0)';
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.friend-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add hover effect for vibe meters
+        document.querySelectorAll('.friend-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                const vibeFill = card.querySelector('.vibe-fill');
+                vibeFill.style.animation = 'none';
+                void vibeFill.offsetWidth;
+                vibeFill.style.animation = 'fillWidth 1s ease-out forwards';
+            });
+        });
+    </script>
+</body>
+</html>
