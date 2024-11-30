@@ -274,6 +274,7 @@
     <div class="container">
         <header class="header">
             <h1 class="title" id="title">Your Top Songs</h1>
+      
             <p class="subtitle">These were your most played tracks this year</p>
         </header>
         
@@ -293,19 +294,13 @@
 
     <script>
         let topSongs = [];
-        
-        async function getTracks() {
-            const url = '/get_tracks/top50/placeholder/';
-            console.log('GETTING TRACKS');
-        
-            try {
-                const response = await fetch(url);
+        async function displayTopSongs() {
+            try{
+                const response = await fetch('/get_tracks/top50/placeholder/');
                 const data = await response.json();
-        
-                if (data.tracks) {
+
+                if (data.tracks){
                     const tracks = data.tracks;
-                    console.table(tracks, ["title", "artist", "uri", "duration"]); // Display tracks in a table format
-             
                     topSongs = tracks.slice(0, 5).map((track, index) => ({
                         rank: index + 1,
                         name: track.title,
@@ -314,7 +309,7 @@
                     }));
                     
                     console.log('Top 5 Tracks:', topSongs);
-
+                  
                     // Add songs to the list with staggered animation
                     const songList = document.querySelector('.song-list');
                     topSongs.forEach((song, index) => {
@@ -327,27 +322,15 @@
             }catch(error){
                 console.error('Request failed', error);
             }
-                
         }
 
-        getTracks()
-
-            const response = await fetch('/api/top-tracks');
-
-            if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const topSongs = await response.json();
-            console.log(topSongs)
-
-            function createSongCard(song, index) {
+        function createSongCard(song, index) {
             const card = document.createElement('div');
             card.className = 'song-card';
             card.style.animationDelay = `${index * 0.1}s`;
 
             card.innerHTML = `
-                <div class="rank">#${song.rank}</div>
+                <div class="rank">#${index + 1}</div>
                 <div class="album-art">
                     <img src="${song.albumArt}" alt="${song.name} album art">
                 </div>
@@ -355,22 +338,11 @@
                     <div class="song-name">${song.name}</div>
                     <div class="artist">${song.artist}</div>
                 </div>
-                {% comment %} <div class="plays">
-                    <div class="plays-number">${song.plays}</div>
-                    <div>plays</div>
-                </div> {% endcomment %}
             `;
 
             return card;
-            }
-
-
-            // Add songs to the list with staggered animation
-            const songList = document.querySelector('.song-list');
-            topSongs.items.forEach((song, index) => {
-                songList.appendChild(createSongCard(song, index));
-            });
         }
+        displayTopSongs();
     </script>
 
     <script>
