@@ -273,7 +273,8 @@
     <div class="background-glow"></div>
     <div class="container">
         <header class="header">
-            <h1 class="title">Your Top Songs</h1>
+            <h1 class="title" id="title">Your Top Songs</h1>
+      
             <p class="subtitle">These were your most played tracks this year</p>
         </header>
         
@@ -307,14 +308,15 @@
                         albumArt: track.albumArt
                     }));
                     
-                    console.log(topSongs)
+                    console.log('Top 5 Tracks:', topSongs);
+                  
                     // Add songs to the list with staggered animation
                     const songList = document.querySelector('.song-list');
                     topSongs.forEach((song, index) => {
                         songList.appendChild(createSongCard(song, index));
                     });
 
-                }else if (data.error) {
+                } else if (data.error) {
                     console.error('Error:', data.error);
                 }
             }catch(error){
@@ -340,7 +342,6 @@
 
             return card;
         }
-        
         displayTopSongs();
     </script>
 
