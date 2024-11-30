@@ -299,43 +299,45 @@
         titleElement.textContent = `Your Top Songs ${year}`;
         
         // Sample top songs data
-        const topSongs = [
-            {
-                rank: 1,
-                name: "Anti-Hero",
-                artist: "Taylor Swift",
-                plays: 432,
-                albumArt: "/api/placeholder/64/64"
-            },
-            {
-                rank: 2,
-                name: "As It Was",
-                artist: "Harry Styles",
-                plays: 385,
-                albumArt: "/api/placeholder/64/64"
-            },
-            {
-                rank: 3,
-                name: "About Damn Time",
-                artist: "Lizzo",
-                plays: 347,
-                albumArt: "/api/placeholder/64/64"
-            },
-            {
-                rank: 4,
-                name: "Bad Habit",
-                artist: "Steve Lacy",
-                plays: 312,
-                albumArt: "/api/placeholder/64/64"
-            },
-            {
-                rank: 5,
-                name: "Break My Soul",
-                artist: "Beyoncé",
-                plays: 298,
-                albumArt: "/api/placeholder/64/64"
+        let topSongs = [];
+        
+        async function getTracks() {
+            const url = '/get_tracks/top50/placeholder/';
+            console.log('GETTING TRACKS');
+        
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+        
+                if (data.tracks) {
+                    const tracks = data.tracks;
+                    console.table(tracks, ["title", "artist", "uri", "duration"]); // Display tracks in a table format
+             
+                    topSongs = tracks.slice(0, 5).map((track, index) => ({
+                        rank: index + 1,
+                        name: track.title,
+                        artist: track.artist,
+                        albumArt: track.albumArt
+                    }));
+                    
+                    console.log('Top 5 Tracks:', topSongs);
+
+                    // Add songs to the list with staggered animation
+                    const songList = document.querySelector('.song-list');
+                    topSongs.forEach((song, index) => {
+                        songList.appendChild(createSongCard(song, index));
+                    });
+
+                } else if (data.error) {
+                    console.error('Error:', data.error);
+                }
+            }catch(error){
+                console.error('Request failed', error);
             }
-        ];
+                
+        }
+
+        getTracks()
 
         function createSongCard(song, index) {
             const card = document.createElement('div');
@@ -351,20 +353,20 @@
                     <div class="song-name">${song.name}</div>
                     <div class="artist">${song.artist}</div>
                 </div>
-                <div class="plays">
+                {% comment %} <div class="plays">
                     <div class="plays-number">${song.plays}</div>
                     <div>plays</div>
-                </div>
+                </div> {% endcomment %}
             `;
             
             return card;
         }
 
         // Add songs to the list with staggered animation
-        const songList = document.querySelector('.song-list');
+        {% comment %} const songList = document.querySelector('.song-list');
         topSongs.forEach((song, index) => {
             songList.appendChild(createSongCard(song, index));
-        });
+        }); {% endcomment %}
     </script>
 
     <script>
