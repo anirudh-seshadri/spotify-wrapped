@@ -292,8 +292,9 @@
     </div>
 
     <script>
-        // Sample top songs data
-        const topSongs = [
+        async function displayTopSongs() {
+            // Sample top songs data
+            const topSongsSample = [
             {
                 rank: 1,
                 name: "Anti-Hero",
@@ -329,13 +330,22 @@
                 plays: 298,
                 albumArt: "/api/placeholder/64/64"
             }
-        ];
+            ];
 
-        function createSongCard(song, index) {
+            const response = await fetch('/api/top-tracks');
+
+            if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const topSongs = await response.json();
+            console.log(topSongs)
+
+            function createSongCard(song, index) {
             const card = document.createElement('div');
             card.className = 'song-card';
             card.style.animationDelay = `${index * 0.1}s`;
-            
+
             card.innerHTML = `
                 <div class="rank">#${song.rank}</div>
                 <div class="album-art">
@@ -350,15 +360,19 @@
                     <div>plays</div>
                 </div>
             `;
-            
+
             return card;
+            }
+
+
+            // Add songs to the list with staggered animation
+            const songList = document.querySelector('.song-list');
+            topSongs.items.forEach((song, index) => {
+                songList.appendChild(createSongCard(song, index));
+            });
         }
 
-        // Add songs to the list with staggered animation
-        const songList = document.querySelector('.song-list');
-        topSongs.forEach((song, index) => {
-            songList.appendChild(createSongCard(song, index));
-        });
+        displayTopSongs();
     </script>
 
     <script>
