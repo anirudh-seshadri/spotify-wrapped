@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Top Songs 2023</title>
+    <title>Your Top Songs</title>
     <style>
         * {
             margin: 0;
@@ -273,7 +273,7 @@
     <div class="background-glow"></div>
     <div class="container">
         <header class="header">
-            <h1 class="title" id="title">Your Top Songs 2023</h1>
+            <h1 class="title" id="title">Your Top Songs</h1>
             <p class="subtitle">These were your most played tracks this year</p>
         </header>
         
@@ -292,13 +292,6 @@
     </div>
 
     <script>
-        const year = localStorage.getItem('year') || '2024'; // Default to 2023 if no year is stored
-        
-        // Update the title dynamically
-        const titleElement = document.getElementById('title');
-        titleElement.textContent = `Your Top Songs ${year}`;
-        
-        // Sample top songs data
         let topSongs = [];
         
         async function getTracks() {
