@@ -4,7 +4,7 @@
 <head> 
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Top Genres 2023</title> 
+    <title>Top Genres</title> 
     <style> 
         * { 
             margin: 0; 
@@ -219,24 +219,26 @@
     <div class="background-glow"></div> 
     <div class="container"> 
         <header class="header"> 
-            <h1 class="title">Top Genres of 2023</h1> 
+            <h1 class="title">Top Genres</h1> 
             <p class="subtitle">Here are your top genres this year</p> 
         </header> 
          
         <div class="podium"> 
-            <div class="podium-position" style="animation-delay: 0.1s;"> 
+            <div id="podium-2" class="podium-position" style="animation-delay: 0.1s;"> 
                 <div class="rank">#2</div> 
                 <div class="genre-name">Pop</div> 
             </div> 
-            <div class="podium-position" style="animation-delay: 0s;"> 
+            <div id="podium-1" class="podium-position" style="animation-delay: 0s;"> 
                 <div class="rank">#1</div> 
                 <div class="genre-name">Hip-Hop</div> 
             </div> 
-            <div class="podium-position" style="animation-delay: 0.2s;"> 
+            <div id="podium-3" class="podium-position" style="animation-delay: 0.2s;"> 
                 <div class="rank">#3</div> 
                 <div class="genre-name">Indie</div> 
             </div> 
         </div> 
+
+        <div id="artists-list"></div>
  
         <div class="next-button-container"> 
             <a href="/top-songs/" class="next-button"> 
@@ -249,7 +251,77 @@
     </div> 
  
     <script> 
-        // Apply the slide-in animation on page load 
+        function getTopArtists() {
+            const url = '/api/top-artists/';
+            
+            fetch(url)
+                .then(response => response.json())  // Parse the JSON response
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error:', data.error);
+                        return;
+                    }
+                    // Extract genres and count their frequency
+                    const allGenres = extractGenres(data.items);
+                    console.log(allGenres);
+
+                    // Count genre frequency
+                    const genreCounts = countGenres(allGenres);
+                    console.log(genreCounts)
+                    
+                    // Sort genres by frequency in descending order
+                    const sortedGenres = sortGenresByFrequency(genreCounts);
+                    console.log(sortedGenres)
+                    // Display the most common genres
+                    displayGenres(sortedGenres);
+                })
+                .catch(error => {
+                    console.error('Request failed', error);
+                });
+        }
+
+        getTopArtists();
+        
+        function extractGenres(artists) {
+            let genres = [];
+            artists.forEach(artist => {
+                // Add the artist's genres to the genres array
+                genres = genres.concat(artist.genres);
+            });
+            return genres;
+        }
+        
+        function countGenres(genres) {
+            const genreCounts = {};
+            genres.forEach(genre => {
+                genreCounts[genre] = (genreCounts[genre] || 0) + 1;
+            });
+            return genreCounts;
+        }
+
+        function sortGenresByFrequency(genreCounts) {
+            const sortedGenres = Object.entries(genreCounts)
+                .sort(([, countA], [, countB]) => countB - countA) // Sort by count in descending order
+                .map(([genre]) => genre); // Get only the genre names
+            return sortedGenres;
+        }
+
+        function displayGenres(genres) {
+            const podium1 = document.getElementById('podium-1');
+            const podium2 = document.getElementById('podium-2');
+            const podium3 = document.getElementById('podium-3');
+        
+            if (genres.length >= 3) {
+                podium1.querySelector('.genre-name').textContent = genres[0];
+                podium2.querySelector('.genre-name').textContent = genres[1];
+                podium3.querySelector('.genre-name').textContent = genres[2];
+            } else {
+                podium1.querySelector('.genre-name').textContent = genres[0] || 'N/A';
+                podium2.querySelector('.genre-name').textContent = genres[1] || 'N/A';
+                podium3.querySelector('.genre-name').textContent = genres[2] || 'N/A';
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', () => { 
             document.body.classList.add('page-enter'); 
         }); 
