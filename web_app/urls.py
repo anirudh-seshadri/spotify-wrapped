@@ -29,5 +29,7 @@ urlpatterns = [
     path('time/', views.time, name="time"),
     path('top-songs/', views.top_songs, name="top_songs"),
     path('aura/', views.aura, name="aura"),
-    path('friends/', views.friends, name="friends")
+    path('friends/', views.friends, name="friends"),
+    path('api/music-personality/', views.get_music_personality, name='music_personality'),
+
 ]
