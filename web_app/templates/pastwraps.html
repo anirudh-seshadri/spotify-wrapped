@@ -66,6 +66,23 @@
             text-align: center;
             width: 100%;
             max-width: 500px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .wrapped-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(114, 9, 183, 0.3);
+            background-color: rgba(255,255,255,0.15);
+        }
+        
+        .wrapped-card:hover::before {
+            left: 100%;
+        }
+        
+        .wrapped-card:active {
+            transform: scale(0.98);
         }
 
         /* Custom scrollbar */
@@ -194,10 +211,10 @@
                 `;
                 
                 // Add the new card to the container
-                wrappedContainer.appendChild(wrappedCard);
+                wrappedContainer.insertBefore(wrappedCard, wrappedContainer.firstChild);
 
-                // Scroll to the bottom of the container
-                wrappedContainer.scrollTop = wrappedContainer.scrollHeight;
+                // Scroll to the top of the container
+                wrappedContainer.scrollTop = 0;
             });
         });
 
