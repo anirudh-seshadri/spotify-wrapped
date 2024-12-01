@@ -16,7 +16,8 @@ from django.utils import timezone
 import urllib.parse
 from django.urls import reverse
 import re
-from .models import WrappedData
+from .models import WrappedData, SpotifyWrapped
+from datetime import datetime
 
 SPOTIFY_AUTH_URL = 'https://accounts.spotify.com/authorize'
 SPOTIFY_TOKEN_URL = 'https://accounts.spotify.com/api/token'
@@ -446,6 +447,42 @@ def get_music_personality(request):
         return JsonResponse({'error': 'Cannot find any Spotify data for the specified user.'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
+
+def generate_wrapped(request):
+    if request.method == 'POST':
+        # Create a new SpotifyWrapped instance
+        now = datetime.now()
+        date = now.date()
+        time = now.time()
+
+        wrapped = SpotifyWrapped.objects.create(
+            user=request.user,
+            date=date,
+            time=time,
+            user_data="Sample Data"
+        )
+        return JsonResponse({'status': 'success', 'id': wrapped.id, 'created_at': wrapped.created_at})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
+
+def get_wraps(request):
+    wraps = SpotifyWrapped.objects.filter(user=request.user).order_by('-created_at')
+    wraps_data = []
+    for wrap in wraps:
+        wraps_data.append({
+            'date': wrap.date.strftime('%A, %B %d, %Y'),
+            'time': wrap.time.strftime('%I:%M:%S %p')
+        })
+    return JsonResponse({'status': 'success', 'wraps': wraps_data})
+
+
+def delete_all_wraps(request):
+    try:
+        # Delete all SpotifyWrapped models for the current user
+        SpotifyWrapped.objects.filter(user=request.user).delete()
+
+        return JsonResponse({'status': 'success', 'message': 'All wraps deleted successfully.'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
 
 def index(request):
     context = {
