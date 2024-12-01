@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Literata:wght@400;700&display=swap" rel="stylesheet">
     <script>
-        // Theme toggle functionality
         function toggleTheme() {
             const body = document.body;
             const button = document.getElementById('theme-toggle');
@@ -98,6 +97,22 @@
 
         <!-- Profile Content -->
 
+            <!-- Profile Actions -->
+            <div class="space-y-4">
+                <button class="w-full bg-[#3B0F46] text-white py-2 px-4 rounded-lg hover:bg-opacity-80 transition-colors">
+                    Edit Profile
+                </button>
+                <button class="w-full bg-[#3B0F46] text-white py-2 px-4 rounded-lg hover:bg-opacity-80 transition-colors">
+                    Change Password
+                </button>
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-opacity-80 transition-colors">
+                        Log Out
+                    </button>
+                </form>
+            </div>
+        </div>
     </main>
 
     <!-- Background Design Elements -->
