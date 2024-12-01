@@ -22,7 +22,7 @@
             width: 100%;
         }
         
-        .generate-btn {
+        .button {
             font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
@@ -35,13 +35,18 @@
             transform: scale(1);
         }
         
-        .generate-btn:hover {
+        .button:hover {
             transform: scale(1.05);
             opacity: 0.9;
         }
         
-        .generate-btn:active {
+        .button:active {
             transform: scale(0.95);
+        }
+
+        #delete-btn {
+            background-color: red;
+            margin-left: 10px;
         }
         
         .wrapped-cards-container {
@@ -134,10 +139,12 @@
     <!-- Main Container for Decorative Elements and Content -->
     <div class="main-container flex flex-col items-center justify-center relative flex-grow">
         <!-- Main Content -->
-        <h1 class="text-white text-4xl font-bold mb-8">View Your Wrappeds</h1>
+        <h1 class="text-white text-4xl font-bold mb-8">View Your Wraps</h1>
         <div class="generate-container">
-            <button id="generate-btn" class="generate-btn">Generate Wrapped</button>
-            
+            <div class="buttons">
+                <button id="generate-btn" class="button">Generate Wrapped</button>
+                <button id="delete-btn" class="button">Delete all?</button>
+            </div>
             <div class="wrapped-cards-container" id="wrapped-container">
                 <!-- Dynamic cards will be inserted here -->
             </div>
@@ -182,42 +189,123 @@
         }
 
         // Generate wrapped functionality
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const generateBtn = document.getElementById('generate-btn');
+            const deleteBtn = document.getElementById('delete-btn');
             const wrappedContainer = document.getElementById('wrapped-container');
 
-            generateBtn.addEventListener('click', () => {
-                // Get current date and time
-                const now = new Date();
-                const dateString = now.toLocaleDateString('en-US', {
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric'
-                });
-                const timeString = now.toLocaleTimeString('en-US', {
-                    hour: '2-digit', 
-                    minute: '2-digit', 
-                    second: '2-digit'
-                });
+            // Fetch previously generated wraps from the backend
+            try {
+                const response = await fetch('/get-wraps/');
+                console.log(response)
+                const data = await response.json();
 
-                // Create a new wrapped card
-                const wrappedCard = document.createElement('div');
-                wrappedCard.classList.add('wrapped-card', 'text-white');
-                wrappedCard.innerHTML = `
-                    <h2 class="text-2xl font-bold mb-4">Your Wrapped</h2>
-                    <p class="text-xl mb-2">Date: ${dateString}</p>
-                    <p class="text-xl">Time: ${timeString}</p>
-                `;
-                
-                // Add the new card to the container
-                wrappedContainer.insertBefore(wrappedCard, wrappedContainer.firstChild);
+                if (data.status === 'success') {
+                    data.wraps.forEach(wrap => {
+                        const wrappedCard = document.createElement('div');
+                        wrappedCard.classList.add('wrapped-card', 'text-white');
+                        wrappedCard.innerHTML = `
+                            <h2 class="text-2xl font-bold mb-4">Your Wrapped</h2>
+                            <p class="text-xl mb-2">Date: ${wrap.date}</p>
+                            <p class="text-xl">Time: ${wrap.time}</p>
+                        `;
+                        wrappedContainer.appendChild(wrappedCard);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading past wraps:', error);
+            }
 
-                // Scroll to the top of the container
-                wrappedContainer.scrollTop = 0;
+            generateBtn.addEventListener('click', async () => {
+                try {
+                    // Send a POST request to generate a new SpotifyWrapped instance
+                    const response = await fetch('/generate-wrapped/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCsrfToken(), // Include CSRF token for security
+                        },
+                    });
+        
+                    if (!response.ok) {
+                        throw new Error('Failed to generate wrapped');
+                    }
+        
+                    const data = await response.json();
+        
+                    if (data.status === 'success') {
+                        // Get current date and time
+                        const now = new Date();
+                        const dateString = now.toLocaleDateString('en-US', {
+                            weekday: 'long', 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric'
+                        });
+                        const timeString = now.toLocaleTimeString('en-US', {
+                            hour: '2-digit', 
+                            minute: '2-digit', 
+                            second: '2-digit'
+                        });
+
+                        // Create a new wrapped card
+                        const wrappedCard = document.createElement('div');
+                        wrappedCard.classList.add('wrapped-card', 'text-white');
+                        wrappedCard.innerHTML = `
+                            <h2 class="text-2xl font-bold mb-4">Your Wrapped</h2>
+                            <p class="text-xl mb-2">Date: ${dateString}</p>
+                            <p class="text-xl">Time: ${timeString}</p>
+                        `;
+                        
+                        // Add the new card to the container
+                        wrappedContainer.insertBefore(wrappedCard, wrappedContainer.firstChild);
+
+                        // Scroll to the top of the container
+                        wrappedContainer.scrollTop = 0;
+                    }
+                } catch (error) {
+                    console.error('Error generating wrapped:', error);
+                }
             });
-        });
 
+            deleteBtn.addEventListener('click', async () => {
+                try {
+                    // Send a POST request to delete all wraps
+                    const response = await fetch('/delete-all-wraps/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCsrfToken(), // Include CSRF token for security
+                        },
+                    });
+        
+                    const data = await response.json();
+        
+                    if (data.status === 'success') {
+                        // Handle success (e.g., show a success message)
+                        location.reload(); 
+                    } else {
+                        // Handle error
+                        alert(data.message);
+                    }
+                } catch (error) {
+                    console.error('Error deleting all wraps:', error);
+                    alert('An error occurred while deleting your wraps.');
+                }
+            });
+        });     
+
+        function getCsrfToken() {
+            const name = 'csrftoken';
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    return cookie.slice(name.length + 1);
+                }
+            }
+            return '';
+        }
         window.addEventListener('load', applyTheme);
     </script>
 </body>
