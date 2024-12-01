@@ -486,3 +486,9 @@ def aura(request):
 
 def friends(request):
     return render(request, 'friends.html')
+
+def game_transition(request):
+    return render(request, 'game_transition.html')
+
+def llm_transition(request):
+    return render(request, 'llm_transition.html')

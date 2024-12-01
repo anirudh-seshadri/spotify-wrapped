@@ -31,5 +31,7 @@ urlpatterns = [
     path('aura/', views.aura, name="aura"),
     path('friends/', views.friends, name="friends"),
     path('api/music-personality/', views.get_music_personality, name='music_personality'),
+    path('game-transition/', views.game_transition, name="game_transition"),
+    path('llm-transition/', views.llm_transition, name="llm_transition"),
 
 ]
