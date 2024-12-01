@@ -14,33 +14,77 @@
             font-family: 'Literata', serif;
         }
         
-        .year-container {
+        .generate-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1rem;
+            width: 100%;
         }
         
-        .year {
-            font-size: 4rem;
+        .generate-btn {
+            font-size: 1.5rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            padding: 10px 20px;
+            padding: 15px 30px;
             border-radius: 10px;
-            transform: scale(1);
-            background: black;
+            background-color: #7209b7;
+            color: white;
             text-align: center;
-            width: 600px
+            transform: scale(1);
         }
         
-        .year:hover {
-            transform: scale(1.1);
-            opacity: 0.8;
+        .generate-btn:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
         }
         
-        .year:active {
+        .generate-btn:active {
             transform: scale(0.95);
+        }
+        
+        .wrapped-cards-container {
+            height: 400px;
+            width: 100%;
+            max-width: 600px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            margin-top: 1rem;
+        }
+        
+        .wrapped-card {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* Custom scrollbar */
+        .wrapped-cards-container::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .wrapped-cards-container::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        
+        .wrapped-cards-container::-webkit-scrollbar-thumb {
+            background: #7209b7;
+            border-radius: 10px;
+        }
+        
+        .wrapped-cards-container::-webkit-scrollbar-thumb:hover {
+            background: #5a0c8c;
         }
     </style>
 </head>
@@ -51,7 +95,6 @@
             <div class="flex items-center">
                 <button id="theme-toggle" class="theme-toggle mr-4" onclick="toggleTheme()">
                     <svg class="icon" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
                     </svg>
                 </button>
                 <a href="{% url 'profile' %}" class="hover:underline text-white profile-link">Profile</a>
@@ -74,13 +117,13 @@
     <!-- Main Container for Decorative Elements and Content -->
     <div class="main-container flex flex-col items-center justify-center relative flex-grow">
         <!-- Main Content -->
-        <h1 class="text-white text-4xl font-bold mb-8">Click the year to view your past wraps...</h1>
-        <div class="year-container">
-            {% comment %} <div class="year year-2024" style="color: #7209b7;" data-year="2024">2024</div> {% endcomment %}
-            <div class="year year-2023" style="color: #f9c74f;" data-year="2023">2023</div>
-            <div class="year year-2022" style="color: #43aa8b;" data-year="2022">2022</div>
-            <div class="year year-2021" style="color: #f94144;" data-year="2021">2021</div>
-            <div class="year year-2020" style="color: #577590;" data-year="2020">2020</div>
+        <h1 class="text-white text-4xl font-bold mb-8">View Your Wrappeds</h1>
+        <div class="generate-container">
+            <button id="generate-btn" class="generate-btn">Generate Wrapped</button>
+            
+            <div class="wrapped-cards-container" id="wrapped-container">
+                <!-- Dynamic cards will be inserted here -->
+            </div>
         </div>
     </div>
 
@@ -102,7 +145,7 @@
                 localStorage.setItem('theme', 'light');
             } else {
                 body.classList.remove('light-mode');
-                button.innerHTML = '<svg class="icon" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>';
+                button.innerHTML = '<svg class="icon" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 818 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>';
                 localStorage.setItem('theme', 'dark');
             }
         }
@@ -115,22 +158,46 @@
             
             if (savedTheme === 'light') {
                 body.classList.add('light-mode');
-                button.innerHTML = '<svg class="icon" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>';
+                button.innerHTML = '<svg class="icon" fill="currentColor" viewBox="0 0 20 20"></svg>';
             } else {
-                button.innerHTML = '<svg class="icon" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>';
+                button.innerHTML = '<svg class="icon" fill="currentColor" viewBox="0 0 20 20"></svg>';
             }
         }
 
-        // Add click event listeners to years
+        // Generate wrapped functionality
         document.addEventListener('DOMContentLoaded', () => {
-            const years = document.querySelectorAll('.year');
-            
-            years.forEach(year => {
-                year.addEventListener('click', () => {
-                    const selectedYear = year.getAttribute('data-year');
-                    localStorage.setItem("year", selectedYear)
-                    window.location.href = '/in-year-you';
+            const generateBtn = document.getElementById('generate-btn');
+            const wrappedContainer = document.getElementById('wrapped-container');
+
+            generateBtn.addEventListener('click', () => {
+                // Get current date and time
+                const now = new Date();
+                const dateString = now.toLocaleDateString('en-US', {
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric'
                 });
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit'
+                });
+
+                // Create a new wrapped card
+                const wrappedCard = document.createElement('div');
+                wrappedCard.classList.add('wrapped-card', 'text-white');
+                wrappedCard.innerHTML = `
+                    <h2 class="text-2xl font-bold mb-4">Your Wrapped</h2>
+                    <p class="text-xl mb-2">Date: ${dateString}</p>
+                    <p class="text-xl">Time: ${timeString}</p>
+                `;
+                
+                // Add the new card to the container
+                wrappedContainer.appendChild(wrappedCard);
+
+                // Scroll to the bottom of the container
+                wrappedContainer.scrollTop = wrappedContainer.scrollHeight;
             });
         });
 
