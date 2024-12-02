@@ -36,4 +36,5 @@ urlpatterns = [
     path('generate-wrapped/', views.generate_wrapped, name='generate_wrapped'),
     path('get-wraps/', views.get_wraps, name='get-wraps'),
     path('delete-all-wraps/', views.delete_all_wraps, name='delete_all_wraps'),
+    path('delete_account/', views.delete_account, name='delete_account'),
 ]
