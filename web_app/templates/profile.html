@@ -105,6 +105,12 @@
                         Log Out
                     </button>
                 </form>
+                <form method="POST" action="{% url 'delete_account' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-opacity-80 transition-colors">
+                        Delete Account
+                    </button>
+                </form>
             </div>
         </div>
     </main>

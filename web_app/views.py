@@ -84,6 +84,16 @@ def logout_view(request):
     messages.info(request, "You have been logged out successfully.")
     return redirect('/login')
 
+@login_required
+def delete_account(request):
+    if request.method == "POST":
+        user = request.user
+        user.delete()
+        request.session.flush()
+        messages.success(request, "Your account has been deleted successfully.")
+        return redirect('/login') 
+    return redirect('/login')
+
 # Takes user to Spotify's auth url
 def spotify_authentication(request):
     if not request.user.is_authenticated:
