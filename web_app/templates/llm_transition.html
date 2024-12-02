@@ -43,6 +43,8 @@
             position: relative;
             z-index: 2;
             transform-style: preserve-3d;
+            width: 100%; /* Ensure full width on mobile */
+            padding: 0 1rem; /* Add padding on smaller screens */
         }
 
         .line {
@@ -57,6 +59,7 @@
             transform: translateY(20px) rotateX(-20deg);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             will-change: transform, box-shadow;
+            max-width: 100%; /* Prevent overflow on small screens */
         }
 
         .line:hover {
@@ -73,6 +76,8 @@
             text-align: center;
             position: relative;
             display: inline-block;
+            word-break: break-word; /* Prevent text overflow */
+            max-width: 100%;
         }
 
         .line-text::before {
@@ -113,6 +118,7 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             position: relative;
             overflow: hidden;
+            text-align: center; /* Center text if it wraps */
         }
         
         .next-button::before {
@@ -167,9 +173,46 @@
             }
         }
 
+        /* Mobile-specific adjustments */
         @media (max-width: 480px) {
+            .background-glow {
+                width: 400px;
+                height: 400px;
+            }
+
+            .container {
+                padding: 0 0.5rem;
+            }
+
             .line-text {
                 font-size: 1.5rem;
+            }
+
+            .line {
+                padding: 0.75rem 1rem;
+                margin: 0.5rem 0;
+            }
+
+            .next-button {
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .next-button .icon {
+                width: 20px;
+                height: 20px;
+                margin-left: 0.25rem;
+            }
+        }
+
+        /* Ensure content is centered and doesn't get cut off on very small screens */
+        @media (max-width: 320px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .line-text {
+                font-size: 1.25rem;
             }
         }
     </style>
