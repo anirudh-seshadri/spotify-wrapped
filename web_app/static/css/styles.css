@@ -548,25 +548,25 @@ video {
 
 .background-design-9 {
   position: fixed;
-  top: 350px;
-  left: 100px;
+  top: 40vh;
+  left: 10vw;
   background-image: url('/static/images/img9.png');
   background-size: contain;
   background-repeat: no-repeat;
-  width: 455px;  
-  height: 1040px; 
+  width: 25vw;  
+  height: 57vw; /* Maintain the original aspect ratio: 1040/455 ≈ 2.28 */
   z-index: 9999;
 }
 
 .background-design-10 {
   position: fixed;
-  top: 650px;
-  left: 300px;
+  top: 65vh;
+  left: 20vw;
   background-image: url('/static/images/img10.png');
   background-size: contain;
   background-repeat: no-repeat;
-  width: 455px;  
-  height: 1040px; 
+  width: 25vw;  
+  height: 57vw; /* Same aspect ratio as background-design-9 */
   z-index: 999;
 }
 
