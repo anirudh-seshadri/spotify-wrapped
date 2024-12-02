@@ -31,5 +31,10 @@ urlpatterns = [
     path('aura/', views.aura, name="aura"),
     path('friends/', views.friends, name="friends"),
     path('api/music-personality/', views.get_music_personality, name='music_personality'),
-
+    path('game-transition/', views.game_transition, name="game_transition"),
+    path('llm-transition/', views.llm_transition, name="llm_transition"),
+    path('generate-wrapped/', views.generate_wrapped, name='generate_wrapped'),
+    path('get-wraps/', views.get_wraps, name='get-wraps'),
+    path('delete-all-wraps/', views.delete_all_wraps, name='delete_all_wraps'),
+    path('delete_account/', views.delete_account, name='delete_account'),
 ]
