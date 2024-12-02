@@ -97,7 +97,7 @@ body.light-mode {
 .theme-toggle {
     position: fixed;
     top: 16px;
-    right: 120px;
+    right: 150px;
     background: transparent;
     border: none;
     cursor: pointer;

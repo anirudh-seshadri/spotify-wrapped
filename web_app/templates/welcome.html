@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Literata:wght@400;700&display=swap" rel="stylesheet">
+    <script src="/static/js/translations.js"></script>
     <script>
         // Theme toggle functionality
         function toggleTheme() {
@@ -134,6 +135,15 @@
         </div>
     </header>
 
+    <!-- Language selector -->
+    <div class="language-selector">
+        <select id="languageSelect" onchange="updateContent(this.value)">
+            <option value="en" data-translate="english">English</option>
+            <option value="es" data-translate="spanish">Spanish</option>
+            <option value="fr" data-translate="french">French</option>
+        </select>
+    </div>
+
     <!-- Main Container for Decorative Elements and Content -->
     <div class="main-container flex flex-col items-center justify-center relative flex-grow">
         <!-- Decorative Elements -->
@@ -145,7 +155,7 @@
 
         <!-- Main Content -->
         <div class="welcome-container text-center">
-            <h1 class="text-4xl font-bold mb-8 text-white">View Your Wrapped</h1>
+            <h1 class="text-4xl font-bold mb-8 text-white" data-translate="view_wrapped">View Your Wrapped</h1>
         </div>
 
         {% if not is_logged_in %}
@@ -162,7 +172,7 @@
         {% if is_logged_in %}
         <div class="next-button-container">
             <a href="/pastwraps" class="next-button">
-                View Your Wraps
+                <span data-translate="view_wraps">View Your Wraps</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
@@ -170,7 +180,7 @@
         </div>
         <div class="next-button-container">
             <a href="/gameintro" class="next-button">
-                Play a game?
+                <span data-translate="play_game">Play a game?</span>
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
@@ -183,5 +193,14 @@
     <footer class="text-center bg-gray-800 text-white py-4">
         <p>&copy; 2024 Your Project</p>
     </footer>
+
+    <script>
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentLang = getCurrentLanguage();
+            document.getElementById('languageSelect').value = currentLang;
+            updateContent(currentLang);
+        });
+    </script>
 </body>
 </html>

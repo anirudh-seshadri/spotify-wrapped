@@ -577,3 +577,50 @@ body {
     overflow: hidden;
     position: relative;
 }
+
+.language-selector {
+  position: fixed;
+  top: 1.5rem;
+  left: 2rem;
+  z-index: 100000;
+}
+
+.language-selector select {
+  background: transparent !important;
+  color: white;
+  border: none !important;
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 1.5em;
+}
+
+/* Style for dropdown options */
+.language-selector select option {
+  background-color: #23063A !important;
+  color: white;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove focus outline */
+.language-selector select:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Custom dropdown arrow */
+.language-selector::after {
+  content: '▼';
+  color: white;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 0.8em;
+}

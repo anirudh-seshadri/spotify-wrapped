@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Literata:wght@400;700&display=swap" rel="stylesheet">
+    <script src="/static/js/translations.js"></script>
     <script>
         function toggleTheme() {
             const body = document.body;
@@ -88,14 +89,21 @@
             <div class="flex items-center">
                 <form method="POST" action="{% url 'delete_account' %}" class="inline mr-4">
                     {% csrf_token %}
-                    <button type="submit" class="hover:underline text-white profile-link">Delete Account</button>
+                    <button type="submit" class="hover:underline text-white profile-link" data-translate="delete_account">Delete Account</button>
                 </form>
             </div>
             <div class="flex items-center">
-                <a href="{% url 'welcome' %}" class="hover:underline text-white profile-link mr-4">Home</a>
+                <div class="language-selector mr-4">
+                    <select id="languageSelect" onchange="updateContent(this.value)">
+                        <option value="en" data-translate="english">English</option>
+                        <option value="es" data-translate="spanish">Spanish</option>
+                        <option value="fr" data-translate="french">French</option>
+                    </select>
+                </div>
+                <a href="{% url 'welcome' %}" class="hover:underline text-white profile-link mr-4" data-translate="home">Home</a>
                 <form method="POST" action="{% url 'logout' %}" class="inline">
                     {% csrf_token %}
-                    <button type="submit" class="hover:underline text-white profile-link">Log out</button>
+                    <button type="submit" class="hover:underline text-white profile-link" data-translate="logout">Log out</button>
                 </form>
             </div>
         </div>
@@ -104,7 +112,7 @@
     <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 py-8">
         <!-- Added Welcome Text -->
-        <h1 class="text-5xl font-bold text-center text-white mb-8">Welcome to your wrapped <span style="color: rgb(187, 18, 156)">profile</span></h1>
+        <h1 class="text-5xl font-bold text-center text-white mb-8" data-translate="profile_welcome">Welcome to your wrapped <span style="color: rgb(187, 18, 156)">profile</span></h1>
 
         <!-- Profile Content -->
             <!-- Profile Actions -->
@@ -125,5 +133,14 @@
     <a href="/pastwraps" class="background-design-8"></a>
     <div class="background-design-9"></div>
     <div class="background-design-10"></div>
+
+    <script>
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentLang = getCurrentLanguage();
+            document.getElementById('languageSelect').value = currentLang;
+            updateContent(currentLang);
+        });
+    </script>
 </body>
 </html>
